@@ -1,0 +1,8 @@
+build
+pnpm-lock.yaml
+LICENSE.md
+.eslintrc.js
+jsconfig.json
+jsconfig.*.json
+tsconfig.json
+tsconfig.*.json

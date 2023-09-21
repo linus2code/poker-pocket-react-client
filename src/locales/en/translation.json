@@ -1,0 +1,15 @@
+{
+  "LOGIN": "Login",
+  "LOGOUT": "Logout",
+  "REGISTER": "Register",
+
+  "GET_ROOMS": "Get rooms",
+  "SPECTATE": "Spectate",
+  "RANKINGS": "Rankings",
+  "SERVER": "Server",
+  "COMMAND": "Cmd",
+  "SOUNDS_DISABLE": "Disable sounds",
+
+  "SERVER_INFORMATION": "Server information",
+  "CLOSE": "Close"
+}
