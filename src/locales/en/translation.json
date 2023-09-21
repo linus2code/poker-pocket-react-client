@@ -11,5 +11,11 @@
   "SOUNDS_DISABLE": "Disable sounds",
 
   "SERVER_INFORMATION": "Server information",
+
+  "PURPLE_TABLE": "Purple table",
+  "BLACK_CARDS": "Black cards",
+  "AUTO_CHECK": "Auto check",
+  "CONNECTION": "Connection",
+
   "CLOSE": "Close"
 }

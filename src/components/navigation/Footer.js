@@ -1,17 +1,35 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
+import contentContext from '@/context/content/contentContext';
+import SwitchButton from '@/components/buttons/SwitchButton';
 
 const StyledItem = styled.div`
   margin-top: 10px;
 `;
 
-const StyledLabel = styled.div`
-  color: #ffffff;
-  margin-left: -20px;
-  font-size: 13px;
-`;
+const LS_USE_PURPLE_TABLE = 'LS_USE_PURPLE_TABLE';
+const LS_USE_BLACK_CARDS = 'LS_USE_BLACK_CARDS';
+
+const changeTableColor = (state) => {
+  var pokerTable = document.getElementById('pokerTable');
+  // localStorage.getItem(LS_USE_PURPLE_TABLE) === 'false');
+
+  if (state) {
+    pokerTable.style.backgroundImage = "url('./assets/images/poker_table_purple.png')";
+  } else {
+    pokerTable.style.backgroundImage = "url('./assets/images/poker_table_green.png')";
+  }
+
+  localStorage.setItem(LS_USE_PURPLE_TABLE, JSON.stringify(state));
+};
+
+const changeBlackCards = (state) => {
+  localStorage.setItem(LS_USE_BLACK_CARDS, JSON.stringify(state));
+};
 
 const Footer = () => {
+  const { t } = useContext(contentContext);
+
   return (
     // <!-- Copyright & badge -->
     <div className="container" style={{ minWidth: '850px' }}>
@@ -24,64 +42,29 @@ const Footer = () => {
           </footer>
         </div>
         <StyledItem className="col">
-          <StyledLabel>Purple table</StyledLabel>
-          <div className="row">
-            <input
-              type="checkbox"
-              name="purple-table-mode-toggle"
-              data-on-color="danger"
-              data-off-color="danger"
-              data-on-text="Off"
-              data-off-text="On"
-              data-size="small"
-              data-label-width="0"
-            />
-          </div>
+          <SwitchButton
+            label={t('PURPLE_TABLE')}
+            name="purple-table-mode-toggle"
+            onChange={(event) => changeTableColor(event.target.checked)}
+          />
         </StyledItem>
         <StyledItem className="col">
-          <StyledLabel>Black cards</StyledLabel>
-          <div className="row">
-            <input
-              type="checkbox"
-              name="black-cards-mode-toggle"
-              data-on-color="danger"
-              data-off-color="danger"
-              data-on-text="Off"
-              data-off-text="On"
-              data-size="small"
-              data-label-width="0"
-            />
-          </div>
+          <SwitchButton
+            label={t('BLACK_CARDS')}
+            name="black-cards-mode-toggle"
+            onChange={(event) => changeBlackCards(event.target.checked)}
+          />
         </StyledItem>
         <StyledItem className="col">
-          <StyledLabel>Auto check</StyledLabel>
-          <div className="row">
-            <input
-              type="checkbox"
-              name="auto-check-mode-toggle"
-              data-on-color="danger"
-              data-off-color="danger"
-              data-on-text="Off"
-              data-off-text="On"
-              data-size="small"
-              data-label-width="0"
-            />
-          </div>
+          <SwitchButton label={t('AUTO_CHECK')} name="auto-check-mode-toggle" />
         </StyledItem>
         <StyledItem className="col">
-          <StyledLabel>Connection</StyledLabel>
-          <div className="row">
-            <input
-              type="checkbox"
-              name="connection-mode-toggle"
-              data-on-color="danger"
-              data-off-color="danger"
-              data-on-text="Dev"
-              data-off-text="Prod"
-              data-size="small"
-              data-label-width="0"
-            />
-          </div>
+          <SwitchButton
+            label={t('CONNECTION')}
+            name="connection-mode-toggle"
+            onText="Dev"
+            offText="Prod"
+          />
         </StyledItem>
         <div className="col-3" style={{ marginTop: '20px' }}>
           <div className="row">

@@ -1,9 +1,10 @@
 import React from 'react';
+import styles from './Seat.module.css';
 
-const Seat = ({ id, name, moneylbl }) => {
+const Seat = ({ className, id, name, moneylbl, betLeft, betRight }) => {
   return (
-    <>
-      <div id={'SeatFrame' + id}>
+    <div className={styles.root}>
+      <div id={'SeatFrame' + id} className={`SeatFrame ${className}`}>
         <div id="ActionFrame" className="container">
           {/* <!-- text div with animation is appended here at 'room' --> */}
         </div>
@@ -41,9 +42,20 @@ const Seat = ({ id, name, moneylbl }) => {
             </div>
           </div>
         </div>
+        <div
+          id="BetFrame"
+          className={`container magictime puffIn bet-pos ${betLeft ? 'bet-left' : ''} ${
+            betRight ? 'bet-right' : ''
+          }`}
+        >
+          <div className="moneyView"></div>
+          <div id="TotalBet" className="betTexts">
+            10000
+          </div>
+        </div>
         <div id="DealerChip" className="dealerChipView"></div>
       </div>
-    </>
+    </div>
   );
 };
 

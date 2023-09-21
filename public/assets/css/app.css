@@ -1,4 +1,4 @@
-.body {
+body {
     background-color: #313131;
 }
 
@@ -117,6 +117,11 @@
     background-size: 90%;
     background-repeat: no-repeat;
     background-position: center;
+    z-index: 2;
+
+    position: absolute;
+    top: 30px;
+    left: 150px;
 }
 
 .playBadge {
