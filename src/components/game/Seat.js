@@ -1,62 +1,138 @@
 import React from 'react';
-import styles from './Seat.module.css';
 
 const Seat = ({ className, id, name, moneylbl, betLeft, betRight }) => {
   return (
-    <div className={styles.root}>
-      <div id={'SeatFrame' + id} className={`SeatFrame ${className}`}>
-        <div id="ActionFrame" className="container">
-          {/* <!-- text div with animation is appended here at 'room' --> */}
-        </div>
-        <div className="container" style={{ width: '200px' }}>
-          <div className="row">
-            <div className="col" style={{ marginLeft: '22px' }}>
-              <div id="c0" className="cardOne magictime puffIn"></div>
-            </div>
-            <div className="col" style={{ marginLeft: '-20px' }}>
-              <div id="c1" className="cardTwo magictime puffIn"></div>
-            </div>
-            <div className="col"></div>
-          </div>
-        </div>
-        <div id="ActionFrame" className="container">
-          {/* <!-- text div with animation is appended here at 'room' --> */}
-        </div>
-        <div className="container" style={{ width: '200px', marginTop: '-20px' }}>
-          <div id="CardView" className="card">
-            <div id="Name" className="seatTexts">
-              {name}
-            </div>
-            <div id="Money" className="seatTexts">
-              {moneylbl}
-            </div>
-            <div className="progress">
-              <div
-                className="progress-bar"
-                role="progressbar"
-                id="TimeBar"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                style={{ width: '50%' }}
-              ></div>
-            </div>
-          </div>
-        </div>
-        <div
-          id="BetFrame"
-          className={`container magictime puffIn bet-pos ${betLeft ? 'bet-left' : ''} ${
-            betRight ? 'bet-right' : ''
-          }`}
-        >
-          <div className="moneyView"></div>
-          <div id="TotalBet" className="betTexts">
-            10000
-          </div>
-        </div>
-        <div id="DealerChip" className="dealerChipView"></div>
-      </div>
-    </div>
   );
-};
+}
 
 export default Seat;
+
+Seat.prototype.initSeat = function () {
+  this.setSeatFrameVisibility(false);
+  this.setName("-");
+  this.setMoney(0);
+  this.setTimeBar(0);
+  this.setBetFrameVisibility(false);
+  this.setTotalBet(0);
+  this.clearCards();
+  this.setActionFrameVisibility(false);
+  this.setDealerChipVisibility(false);
+};
+
+Seat.prototype.initAnimations = function () {
+  this.seatCard0.classList.remove('magictime');
+  this.seatCard0.classList.remove('puffIn');
+  this.seatCard1.classList.remove('magictime');
+  this.seatCard1.classList.remove('puffIn');
+  this.seatCard0.style.animation = '';
+  this.seatCard1.style.animation = '';
+  this.seatCardView.style.animation = '';
+  this.seatBetFrame.classList.remove('magictime');
+  this.seatBetFrame.classList.remove('puffIn');
+};
+
+Seat.prototype.setSeatFrameVisibility = function (bool) {
+  bool ? this.seatFrame.style.visibility = 'visible' : this.seatFrame.style.visibility = 'hidden'
+};
+
+Seat.prototype.clearCards = function () {
+  this.seatCard0.style.backgroundImage = 'url()';
+  this.seatCard1.style.backgroundImage = 'url()';
+};
+
+Seat.prototype.setCard0 = function (cardStr, playerId, isResultsCall, isMiddleOfTheGame) {
+  if (enableSounds && !isMiddleOfTheGame) {
+    playCardSlideSix.play();
+  }
+  if (playerId == CONNECTION_ID || isResultsCall) {
+    this.seatCard0.style.backgroundImage = 'url(' + getCardResource(cardStr) + ')';
+  } else {
+    this.seatCard0.style.backgroundImage = 'url(' + imgFolder + 'card_top_red.png' + ')';
+  }
+  this.seatCard0.classList.toggle('magictime');
+  this.seatCard0.classList.toggle('puffIn');
+};
+
+Seat.prototype.setCard1 = function (cardStr, playerId, isResultsCall, isMiddleOfTheGame) {
+  if (enableSounds && !isMiddleOfTheGame) {
+    playCardSlideSix.play();
+  }
+  if (playerId == CONNECTION_ID || isResultsCall) {
+    this.seatCard1.style.backgroundImage = 'url(' + getCardResource(cardStr) + ')';
+  } else {
+    this.seatCard1.style.backgroundImage = 'url(' + imgFolder + 'card_top_red.png' + ')';
+  }
+  this.seatCard1.classList.toggle('magictime');
+  this.seatCard1.classList.toggle('puffIn');
+};
+
+Seat.prototype.setName = function (name) {
+  this.seatName.innerHTML = name;
+};
+
+Seat.prototype.setMoney = function (money) {
+  this.seatMoney.innerHTML = Number(money).currencyFormat(2, '.', ',') + '$';
+};
+
+Seat.prototype.setTimeBar = function (progress) {
+  this.seatTimeBar.style = 'width:' + progress + '%';
+};
+
+Seat.prototype.setBetFrameVisibility = function (bool) {
+  bool ? this.seatBetFrame.style.visibility = 'visible' : this.seatBetFrame.style.visibility = 'hidden'
+};
+
+Seat.prototype.setTotalBet = function (value) {
+  var previousValue = Number(this.seatTotalBet.innerHTML);
+  if (value != previousValue && value != 0 && value != void 0) {
+    // toastr["info"]("{ value change: " + value + " }");
+    this.seatBetFrame.classList.toggle('magictime');
+    this.seatBetFrame.classList.toggle('puffIn');
+  }
+  this.seatTotalBet.innerHTML = value;
+};
+
+Seat.prototype.seatStartWinningGlowAnimation = function () {
+  this.seatCardView.style.animation = 'winnerPulse 0.5s infinite alternate';
+};
+
+Seat.prototype.seatStartWinningGlowCardAnimation = function (cardNumber) {
+  cardNumber == 0 ? this.seatCard0.style.animation = 'slideUp 1.0s infinite alternate' :
+    this.seatCard1.style.animation = 'slideUp 1.0s infinite alternate';
+};
+
+Seat.prototype.setActionFrameVisibility = function (bool) {
+  bool ? this.seatActionFrame.style.visibility = 'visible' : this.seatActionFrame.style.visibility = 'hidden';
+};
+
+Seat.prototype.setActionFrameLastAction = function (actionStr) {
+  var _this = this;
+  this.setActionFrameVisibility(true);
+  this.seatActionFrame.innerHTML = ''; // clean inner element's
+  var textDiv = document.createElement('div'); // Create new div element
+  textDiv.className = 'lastActionTexts magicTimeAction puffIn';
+  textDiv.innerHTML = actionStr;
+  this.seatActionFrame.appendChild(textDiv);
+  hideLastActionAsync();
+
+  async function hideLastActionAsync() {
+    await sleep(1000);
+    _this.setActionFrameVisibility(false);
+  }
+};
+
+Seat.prototype.setDealerChipVisibility = function (bool) {
+  bool ? this.seatDealerChip.style.visibility = 'visible' : this.seatDealerChip.style.visibility = 'hidden';
+};
+
+
+Seat.prototype.seatCollectChipsToPot = function () {
+  var _this = this;
+  this.seatBetFrame.style.animation = this.seatBetFrame.getAttribute('id').substring(0, 2) + 'ChipsToPot 0.5s alternate';
+  console.log('collect pot full animation name was: ' + this.seatBetFrame.getAttribute('id').substring(0, 2) + 'ChipsToPot 0.5s alternate');
+  setTimeout(function () {
+    _this.seatBetFrame.style.animation = '';
+    _this.setBetFrameVisibility(false);
+  }, 500)
+};
+

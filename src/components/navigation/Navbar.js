@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { toast } from 'react-toastify';
 import NavButton from '@/components/buttons/NavButton';
 import contentContext from '@/context/content/contentContext';
 
@@ -418,6 +419,9 @@ const Navbar = ({ loggedIn, openModal }) => {
               <NavButton onClick={openCmdModal}>{t('COMMAND')}</NavButton>
               <NavButton id="soundToggleBtn" onClick={toggleSounds}>
                 {t('SOUNDS_DISABLE')}
+              </NavButton>
+              <NavButton id="soundToggleBtn" onClick={() => toast.success('Wow so easy!')}>
+                {t('NOTIFICATION')}
               </NavButton>
             </ul>
             <ul
