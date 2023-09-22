@@ -44,24 +44,33 @@ const Footer = () => {
         <StyledItem className="col">
           <SwitchButton
             label={t('PURPLE_TABLE')}
-            name="purple-table-mode-toggle"
-            onChange={(event) => changeTableColor(event.target.checked)}
+            id="purple-table-mode-toggle"
+            onText="On"
+            offText="Off"
+            onChange={(checked) => changeTableColor(checked)}
           />
         </StyledItem>
         <StyledItem className="col">
           <SwitchButton
             label={t('BLACK_CARDS')}
-            name="black-cards-mode-toggle"
-            onChange={(event) => changeBlackCards(event.target.checked)}
+            id="black-cards-mode-toggle"
+            onText="On"
+            offText="Off"
+            onChange={(checked) => changeBlackCards(checked)}
           />
         </StyledItem>
         <StyledItem className="col">
-          <SwitchButton label={t('AUTO_CHECK')} name="auto-check-mode-toggle" />
+          <SwitchButton
+            label={t('AUTO_CHECK')}
+            id="auto-check-mode-toggle"
+            onText="On"
+            offText="Off"
+          />
         </StyledItem>
         <StyledItem className="col">
           <SwitchButton
             label={t('CONNECTION')}
-            name="connection-mode-toggle"
+            id="connection-mode-toggle"
             onText="Dev"
             offText="Prod"
           />
