@@ -12,7 +12,6 @@ const LS_USE_BLACK_CARDS = 'LS_USE_BLACK_CARDS';
 
 // UI settings
 const LS_MODE_TOGGLE_STATE = 'LS_MODE_TOGGLE_STATE';
-// const LS_ENABLE_SOUNDS_STATE = 'LS_ENABLE_SOUNDS_STATE';
 
 // Sleep promise
 function sleep(ms) {

@@ -8,7 +8,9 @@ const StyledCard = styled.div`
   padding-bottom: 5px;
 `;
 
-const RoomStatus = () => {
+const RoomStatus = ({ roomInfo }) => {
+  console.log('init RoomStatus');
+
   return (
     <StyledCard className="card">
       {/* <!-- Room status --> */}
@@ -18,27 +20,27 @@ const RoomStatus = () => {
             <div className="row">
               <div className="col-sm">
                 <div id="roomName" style={{ color: '#FFFFFF', fontSize: '14px' }}>
-                  ♦ Default room
+                  {roomInfo.getRoomName()}
                 </div>
               </div>
               <div className="col-sm">
                 <div id="spectatorsCount" style={{ color: '#FFFFFF', fontSize: '12px' }}>
-                  ♦ Spectating: 0
+                  {roomInfo.getRoomSpectatorCount()}
                 </div>
               </div>
               <div className="col-sm">
                 <div id="waitingPlayersCount" style={{ color: '#FFFFFF', fontSize: '12px' }}>
-                  ♦ Waiting: 0
+                  {roomInfo.getRoomWaitingPlayersCount()}
                 </div>
               </div>
               <div className="col-sm">
                 <div id="deckStatus" style={{ color: '#FFFFFF', fontSize: '12px' }}>
-                  ♦ Deck: -
+                  {roomInfo.getRoomDeckStatus()}
                 </div>
               </div>
               <div className="col-sm">
                 <div id="deckCardsBurned" style={{ color: '#FFFFFF', fontSize: '12px' }}>
-                  ♦ Burned: -
+                  {roomInfo.getRoomDeckBurnedCount()}
                 </div>
               </div>
             </div>
@@ -49,7 +51,7 @@ const RoomStatus = () => {
             <div className="row">
               <div className="col-sm">
                 <div id="roomStatusText" style={{ color: 'white', textAlign: 'left' }}>
-                  Wait for parameters...
+                  {roomInfo.getRoomStatusText()}
                 </div>
               </div>
             </div>

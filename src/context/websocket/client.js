@@ -1,12 +1,6 @@
 /* WebSocket communication handler */
-var CONNECTION_ID = -1;
-var SOCKET_KEY = null;
-var ROOM_ID = -1;
 var webSocket = null;
 var showRoomsModal = true;
-var actionButtonsEnabled = false;
-var autoPlay = false; // Set true makes logged in player play automatically
-var autoPlayCommandRequested = false;
 
 // For log in user's
 const LS_POLICY_ACCEPTED = "LS_POLICY_ACCEPTED";

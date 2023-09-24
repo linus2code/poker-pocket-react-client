@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ActionControl = () => {
+const ActionControl = ({ ctrl }) => {
   function raiseHelper(amount, allIn) {}
 
   function betTenClick() {
@@ -81,27 +81,29 @@ const ActionControl = () => {
           <div className="col">
             <button
               onClick={foldBtnClick}
-              id="foldBtn"
               type="button"
-              className="btn btn-danger"
+              className={`btn btn-danger ${ctrl.isFoldBtn ? 'ctrl-btn-visiable' : 'ctrl-btn-hide'}`}
               style={{ margin: '0 2px' }}
             >
+              {ctrl.isFoldBtn}
               Fold
             </button>
             <button
               onClick={checkBtnClick}
-              id="checkBtn"
               type="button"
-              className="btn btn-danger"
+              className={`btn btn-danger ${
+                ctrl.isCheckBtn ? 'ctrl-btn-visiable' : 'ctrl-btn-hide'
+              }`}
               style={{ margin: '0 2px' }}
             >
-              Check
+              {ctrl.isCallSituation ? 'Call' : 'Check'}
             </button>
             <button
               onClick={raiseBtnClick}
-              id="raiseBtn"
               type="button"
-              className="btn btn-danger"
+              className={`btn btn-danger ${
+                ctrl.isRaiseBtn ? 'ctrl-btn-visiable' : 'ctrl-btn-hide'
+              }`}
               style={{ margin: '0 2px' }}
             >
               Raise

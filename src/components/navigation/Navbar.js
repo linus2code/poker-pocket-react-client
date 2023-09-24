@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
 import NavButton from '@/components/buttons/NavButton';
 import contentContext from '@/context/content/contentContext';
+import modalContext from '@/context/modal/modalContext';
 import SelectRoomModal from '@/modals/SelectRoomModal';
 import RankingsModal from '@/modals/RankingsModal';
 import GameInfoModal from '@/modals/GameInfoModal';
@@ -9,18 +10,57 @@ import CommandModal from '@/modals/CommandModal';
 import UserModal from '@/modals/UserModal';
 import SignInModal from '@/modals/SignInModal';
 import SignOnModal from '@/modals/SignOnModal';
+import socketContext from '@/context/websocket/socketContext';
+import gameContext from '@/context/game/gameContext';
 
-const Navbar = ({ loggedIn, openModal }) => {
+const LS_ENABLE_SOUNDS_STATE = 'LS_ENABLE_SOUNDS_STATE';
+
+const Navbar = ({ loggedIn }) => {
   const { t } = useContext(contentContext);
+  const { openModal, closeModal } = useContext(modalContext);
 
-  function getRooms(roomSortParam) {}
-  function getSpectateRooms() {}
+  const { socket } = useContext(socketContext);
+  const socketCtx = useContext(socketContext);
+  const gameCtx = useContext(gameContext);
+
   function getRankings() {}
   function getGameInformation() {}
-  function toggleSounds() {}
   function getLoggedInUserStatistics() {}
 
-  const openRoomModal = () => openModal(() => <SelectRoomModal />, t('Select room'), t('CLOSE'));
+  const [enableSounds, setEnableSounds] = useState(true);
+
+  useEffect(() => {
+    const sounds = localStorage.getItem(LS_ENABLE_SOUNDS_STATE);
+    setEnableSounds(sounds);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(LS_ENABLE_SOUNDS_STATE, enableSounds ? 'true' : 'false');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enableSounds]);
+
+  function toggleSounds() {
+    setEnableSounds(!enableSounds);
+  }
+
+  const openRoomModal = (mode) => {
+    console.log('socket', socket);
+    if (socket) {
+      openModal(
+        () => (
+          <SelectRoomModal
+            mode={mode}
+            socket2={socket}
+            context={{ socketCtx, gameCtx }}
+            closeModal={closeModal}
+          />
+        ),
+        t('Select room'),
+        t('CLOSE')
+      );
+    }
+  };
 
   const openRankingsModal = () => openModal(() => <RankingsModal />, t('Rankings'), t('CLOSE'));
 
@@ -61,12 +101,8 @@ const Navbar = ({ loggedIn, openModal }) => {
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav mr-auto mt-1 mt-md-0">
-              <NavButton onClick={() => openRoomModal() && getRooms('all')}>
-                {t('GET_ROOMS')}
-              </NavButton>
-              <NavButton onClick={() => openRoomModal() && getSpectateRooms()}>
-                {t('SPECTATE')}
-              </NavButton>
+              <NavButton onClick={() => openRoomModal('all')}>{t('GET_ROOMS')}</NavButton>
+              <NavButton onClick={() => openRoomModal('Spec')}>{t('SPECTATE')}</NavButton>
               <NavButton onClick={() => openRankingsModal() && getRankings()}>
                 {t('RANKINGS')}
               </NavButton>
@@ -74,10 +110,10 @@ const Navbar = ({ loggedIn, openModal }) => {
                 {t('SERVER')}
               </NavButton>
               <NavButton onClick={openCmdModal}>{t('COMMAND')}</NavButton>
-              <NavButton id="soundToggleBtn" onClick={toggleSounds}>
-                {t('SOUNDS_DISABLE')}
+              <NavButton onClick={toggleSounds}>
+                {enableSounds ? t('SOUNDS_DISABLE') : t('SOUNDS_ENABLE')}
               </NavButton>
-              <NavButton id="soundToggleBtn" onClick={() => toast.success('Wow so easy!')}>
+              <NavButton onClick={() => toast.success('Wow so easy!')}>
                 {t('NOTIFICATION')}
               </NavButton>
             </ul>

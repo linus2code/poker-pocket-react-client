@@ -8,6 +8,7 @@ const GlobalState = ({ children }) => {
   const [email, setEmail] = useState(null);
   const [tables, setTables] = useState(null);
   const [players, setPlayers] = useState(null);
+  const [roomData, setRoomData] = useState(null);
 
   return (
     <GlobalContext.Provider
@@ -22,6 +23,8 @@ const GlobalState = ({ children }) => {
         setId,
         tables,
         setTables,
+        roomData,
+        setRoomData,
         players,
         setPlayers,
       }}
