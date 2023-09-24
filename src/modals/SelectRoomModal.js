@@ -29,7 +29,6 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
   const [roomsData, setRoomsData] = useState(null);
 
   useEffect(() => {
-    console.log('socket', socket);
     if (!isSpect) {
       getRooms(socket, filter.params);
     } else {

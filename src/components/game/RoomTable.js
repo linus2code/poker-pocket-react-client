@@ -1,10 +1,7 @@
 import React from 'react';
-import BoardCards from './BoardCards';
 import SeatUI from './SeatUI';
 
-const RoomTable = ({ board }) => {
-  console.log('init RoomTable');
-
+const RoomTable = ({ children }) => {
   return (
     <div id="pokerTable" className="poker-table">
       {/* <!-- Top layout --> */}
@@ -31,9 +28,7 @@ const RoomTable = ({ board }) => {
         </div>
         <div className="col-5">
           {/* <!-- MIDDLE CARDS --> */}
-          <div style={{ marginTop: '15px', marginLeft: '20px' }}>
-            <BoardCards board={board} />
-          </div>
+          {children}
           {/* <!-- /MIDDLE CARDS --> */}
         </div>
         <div className="col">

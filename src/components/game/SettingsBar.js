@@ -1,7 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
+import globalContext from '@/context/global/globalContext';
 import contentContext from '@/context/content/contentContext';
 import SwitchButton from '@/components/buttons/SwitchButton';
+import { parserCardStyle } from '@/utils/CardRes';
 
 const StyledItem = styled.div`
   margin-top: 10px;
@@ -19,7 +21,7 @@ function sleep(ms) {
 }
 
 const purpleBgVal = () => {
-  const purpleBgVal = localStorage.getItem(LS_USE_BLACK_CARDS);
+  const purpleBgVal = localStorage.getItem(LS_USE_PURPLE_TABLE);
   if (purpleBgVal === null || purpleBgVal === 'undefined') {
     return false;
   }
@@ -35,6 +37,7 @@ const blackCardVal = () => {
 };
 
 const SettingsBar = () => {
+  const { setCardStyle } = useContext(globalContext);
   const { t } = useContext(contentContext);
 
   const [tablePurpleBg, setTablePurpleBg] = useState(purpleBgVal());
@@ -60,8 +63,9 @@ const SettingsBar = () => {
   };
 
   const changeBlackCards = (state) => {
-    // applyBlackCards(state);
-    localStorage.setItem(LS_USE_BLACK_CARDS, JSON.stringify(state));
+    const cards_style = JSON.stringify(state);
+    setCardStyle(parserCardStyle(cards_style));
+    localStorage.setItem(LS_USE_BLACK_CARDS, cards_style);
   };
 
   const changeConnectMode = (state) => {

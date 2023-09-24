@@ -1,18 +1,21 @@
-const LS_USE_BLACK_CARDS = 'LS_USE_BLACK_CARDS';
-
 var imgFolder = './assets/images/';
 
-export const getCardResource = (cardStr) => {
+export const parserCardStyle = (val) => {
   var styleStr = '';
-  if (localStorage.getItem(LS_USE_BLACK_CARDS) != null) {
-    styleStr = localStorage.getItem(LS_USE_BLACK_CARDS) === 'true' ? '_black' : '';
+  if (val != null) {
+    styleStr = val === 'true' ? '_black' : '';
   }
+
+  return styleStr;
+};
+
+export const getCardResource = (cardStr, styleStr) => {
   var suit = getSuit(cardStr);
   var value = getValue(cardStr);
   if (suit === undefined || suit === '' || value === undefined || value === '') {
     return '';
   } else {
-    return imgFolder + 'card_' + suit + '_' + value + styleStr + '.png';
+    return imgFolder + `card_${suit}_${value}${styleStr}.png`;
   }
 };
 

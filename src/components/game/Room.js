@@ -1,15 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import gameContext from '@/context/game/gameContext';
 import socketContext from '@/context/websocket/socketContext';
 import NewRoom, {
   NewRoomInfo,
   NewBoard,
   NewCtrl,
+  initRoom,
   statusUpdate,
 } from '@/components/game/domains/Room';
 import { playChipsHandleFive } from '@/components/audio';
 import RoomStatus from '@/components/game/RoomStatus';
 import RoomTable from '@/components/game/RoomTable';
+import BoardCards from '@/components/game/BoardCards';
 import ActionControl from '@/components/game/ActionControl';
 
 const Room = () => {
@@ -22,30 +24,20 @@ const Room = () => {
     autoPlay,
     setActionButtonsEnabled,
     autoPlayCommandRequested,
+    setRoomInfo,
+    setBoard,
+    // setCtrl,
   } = useContext(gameContext);
 
-  const [roomInfo, setRoomInfo] = useState(NewRoomInfo());
-  const [board, setBoard] = useState(NewBoard(enableSounds));
-  const [ctrl, setCtrl] = useState(NewCtrl(enableSounds));
-
-  const [room] = useState(NewRoom(roomInfo, board, ctrl));
-
-  const setRoomUpdate = (sData) => {
-    if (sData) {
-      statusUpdate(sData, room);
-      setRoomInfo(roomInfo);
-      setBoard(board);
-      setCtrl(ctrl);
-      // statusPlayerUpdate(roomStatus, players);
-    }
-  };
+  useEffect(() => {
+    // console.log('reg onRoomHandler');
+    regRoomHandler(onRoomHandler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function onRoomHandler(jsonData) {
     // console.log('onRoomHandler jsonData', jsonData);
     if (!jsonData) return;
-
-    console.log('room jsonData ' + jsonData.key);
-    // console.log(JSON.stringify(sData));
 
     switch (jsonData.key) {
       case 'roomParams':
@@ -89,16 +81,21 @@ const Room = () => {
     return true;
   }
 
+  const roomInfo = NewRoomInfo();
+  const board = NewBoard(enableSounds);
+  const ctrl = NewCtrl(enableSounds);
+  const room = NewRoom(roomInfo, board, ctrl);
+
   // init room data
   function roomParameters(rData) {
     console.log('Room params: ' + JSON.stringify(rData));
-    // initRoom();
+    initRoom(room);
     // initSeats();
     // getLoggedInUserStatistics(); // Added so refreshing xp needed counter updates automatically
     roomStatusParser(rData);
     boardParser(rData);
-    // setRoomInfo(roomInfo);
-    setBoard(board);
+    setRoomInfo({ data: roomInfo });
+    setBoard({ data: board });
     // playerParser(rData);
   }
 
@@ -111,10 +108,12 @@ const Room = () => {
     const gameStarted = rData.gameStarted;
     if (rData.middleCards?.length > 0) {
       for (let m = 0; m < rData.middleCards.length; m++) {
-        board.middleCards.push(rData.middleCards[m]);
+        board.middleCards[m] = rData.middleCards[m];
         board.setMiddleCard(m, gameStarted);
       }
     }
+
+    return board;
   }
   // eslint-disable-next-line no-unused-vars
   function playerParser(rData) {
@@ -225,7 +224,7 @@ const Room = () => {
       const player = players[i];
 
       player.setTimeBar(pTimeBar);
-      if (Number(pId) == Number(connId) && player.tempBet > 0) {
+      if (Number(pId) === Number(connId) && player.tempBet > 0) {
         // Do nothing
       } else {
         player.setPlayerMoney(pMoney);
@@ -238,7 +237,7 @@ const Room = () => {
           player.setPlayerFold();
         }
       }
-      if (Number(pId) == Number(connId)) {
+      if (Number(pId) === Number(connId)) {
         player.setPlayerTurn(pTurn, sData.isCallSituation);
         setActionButtonsEnabled(true);
         if (pTurn && autoPlay && !autoPlayCommandRequested) {
@@ -279,35 +278,48 @@ const Room = () => {
     setPlayers(players);
   }
 
+  const setRoomUpdate = (sData) => {
+    console.log('statusUpdate ', sData);
+
+    statusUpdate(sData, room);
+    setRoomInfo({ data: roomInfo });
+    // setBoard({ data: board2 });
+    // setCtrl({ data: ctrl });
+    // statusPlayerUpdate(roomStatus, players);
+  };
+
   async function theFlop(fData) {
     board.middleCards[0] = fData.middleCards[0];
     board.middleCards[1] = fData.middleCards[1];
     board.middleCards[2] = fData.middleCards[2];
-    setBoard(board);
+    console.log('set theFlop');
+    setBoard({ data: board });
   }
 
   async function theTurn(tData) {
     board.middleCards[3] = tData.middleCards[3];
-    setBoard(board);
+    console.log('set theTurn');
+    setBoard({ data: board });
   }
 
   function theRiver(rData) {
-    board.middleCards[4] = rData.middleCards[4];
-    setBoard(board);
-  }
+    console.log('set theRiver');
 
-  useEffect(() => {
-    // console.log('reg onRoomHandler');
-    regRoomHandler(onRoomHandler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    board.middleCards[4] = rData.middleCards[4];
+    setBoard({ data: board });
+  }
 
   return (
     <>
-      <RoomStatus roomInfo={roomInfo} />
+      {console.log('RE-RENDER Room')}
+      <RoomStatus />
       {/* <!-- Poker table --> */}
-      <RoomTable board={board} />
-      <ActionControl ctrl={ctrl} />
+      <RoomTable>
+        <div style={{ marginTop: '15px', marginLeft: '20px' }}>
+          <BoardCards />
+        </div>
+      </RoomTable>
+      <ActionControl />
     </>
   );
 };

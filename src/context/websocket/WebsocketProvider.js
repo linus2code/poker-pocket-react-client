@@ -25,7 +25,6 @@ const WebSocketProvider = ({ children }) => {
 
   const openRoomModal = (mode) => {
     if (socket) {
-      console.log('socket', socket);
       openModal(() => <SelectRoomModal mode={mode} />, 'Select room', 'CLOSE');
     }
   };
@@ -33,7 +32,9 @@ const WebSocketProvider = ({ children }) => {
   // ----------------------------------------------------
   // From server commands a.k.a. messages
   const onMessageHandler = (jsonData) => {
+    // console.log(JSON.stringify(jsonData));
     if (onRoomHandler && onRoomHandler(jsonData)) {
+      console.log('room jsonData ' + jsonData.key);
       return;
     }
 

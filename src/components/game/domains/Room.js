@@ -1,17 +1,4 @@
-// import { getCardResource } from './CardRes';
 import { playCardTakeOutFromPackageOne, playCardSlideSix } from '@/components/audio';
-
-/*
-const setMiddleCard0 = (cardStr, middleCard) => {
-  middleCard.style.backgroundImage = 'url(' + getCardResource(cardStr) + ')';
-  middleCard.classList.toggle('magictime');
-  middleCard.classList.toggle('puffIn');
-};
-*/
-
-const clearMiddleCard0 = (middleCard) => {
-  middleCard.style.backgroundImage = 'url()';
-};
 
 const animateMiddleCard0 = (middleCard) => {
   // middleCard.style.animation = 'slideUp 1.0s infinite alternate';
@@ -22,76 +9,25 @@ export const NewBoard = (enableSounds) => {
   let minBet = 100;
 
   const middleCards = [];
-  let middleCard0 = null;
-  let middleCard1 = null;
-  let middleCard2 = null;
-  let middleCard3 = null;
-  let middleCard4 = null;
+  for (let m = 0; m < 5; m++) {
+    middleCards.push(null);
+  }
 
-  // middleCards.push(middleCard0);
-  // middleCards.push(middleCard1);
-  // middleCards.push(middleCard2);
-  // middleCards.push(middleCard3);
-  // middleCards.push(middleCard4);
-
-  const clearMiddleCards = () => {
-    clearMiddleCard0(middleCard0);
-    clearMiddleCard0(middleCard1);
-    clearMiddleCard0(middleCard2);
-    clearMiddleCard0(middleCard3);
-    clearMiddleCard0(middleCard4);
+  const resetMiddleCards = () => {
+    for (let m = 0; m < middleCards.length; m++) {
+      middleCards[m] = null;
+    }
   };
 
   const setMiddleCard = (number, isMiddleOfTheGame) => {
     if (enableSounds && !isMiddleOfTheGame) {
       playCardSlideSix.play();
     }
-    switch (number) {
-      case 0:
-        middleCards[number] = middleCard0;
-        // setMiddleCard0(middleCards[number], middleCard0);
-        break;
-      case 1:
-        middleCards[number] = middleCard1;
-        // setMiddleCard0(middleCards[number], middleCard1);
-        break;
-      case 2:
-        middleCards[number] = middleCard2;
-        // setMiddleCard0(middleCards[number], middleCard2);
-        break;
-      case 3:
-        middleCards[number] = middleCard3;
-        // setMiddleCard0(middleCards[number], middleCard3);
-        break;
-      case 4:
-        middleCards[number] = middleCard4;
-        // setMiddleCard0(middleCards[number], middleCard4);
-        break;
-      default:
-        break;
-    }
   };
 
   const startWinnerCardGlowAnimation = (cardNumber) => {
-    switch (cardNumber) {
-      case 0:
-        animateMiddleCard0(middleCard0);
-        break;
-      case 1:
-        animateMiddleCard0(middleCard1);
-        break;
-      case 2:
-        animateMiddleCard0(middleCard2);
-        break;
-      case 3:
-        animateMiddleCard0(middleCard3);
-        break;
-      case 4:
-        animateMiddleCard0(middleCard4);
-        break;
-      default:
-        break;
-    }
+    if (cardNumber < 0 || cardNumber > 5) return;
+    animateMiddleCard0(middleCards[cardNumber]);
   };
 
   const setTotalPot = (money) => {
@@ -120,7 +56,7 @@ export const NewBoard = (enableSounds) => {
     getTotalPot,
     setMinBet,
     getMinBet,
-    clearMiddleCards,
+    resetMiddleCards,
     setMiddleCard,
     startWinnerCardGlowAnimation,
   };
@@ -203,7 +139,7 @@ export const NewCtrl = (enableSounds) => {
   let isCheckBtn = true;
   let isRaiseBtn = true;
   let isCallSituation = true;
-  // When calling situation occurs, swap check btn text to call (handled by statusUpdate call from server)
+
   const toggleCheckAndCall = (val) => {
     isCallSituation = val;
   };
@@ -250,30 +186,17 @@ const NewRoom = (roomInfo, board, ctrl) => {
 
 export const initRoom = (room) => {
   initBoard(room.board);
-
-  room.setTotalPot(0);
-  room.setMinBet(0);
-  room.ctrl.actionBtnVisibility(false, true);
+  initCtrl(room.ctrl);
 };
 
 export const initBoard = (board) => {
-  board.middleCards = [];
-  board.clearMiddleCards();
-  // board.middleCard0.classList.remove('magictime');
-  // board.middleCard0.classList.remove('puffIn');
-  // board.middleCard0.style.animation = '';
-  // board.middleCard1.classList.remove('magictime');
-  // board.middleCard1.classList.remove('puffIn');
-  // board.middleCard1.style.animation = '';
-  // board.middleCard2.classList.remove('magictime');
-  // board.middleCard2.classList.remove('puffIn');
-  // board.middleCard2.style.animation = '';
-  // board.middleCard3.classList.remove('magictime');
-  // board.middleCard3.classList.remove('puffIn');
-  // board.middleCard3.style.animation = '';
-  // board.middleCard4.classList.remove('magictime');
-  // board.middleCard4.classList.remove('puffIn');
-  // board.middleCard4.style.animation = '';
+  board.setTotalPot(0);
+  board.setMinBet(0);
+  board.resetMiddleCards();
+};
+
+export const initCtrl = (ctrl) => {
+  ctrl.actionBtnVisibility(false, true);
 };
 
 // ----------------------------------------------------

@@ -49,12 +49,7 @@ const Navbar = ({ loggedIn }) => {
     if (socket) {
       openModal(
         () => (
-          <SelectRoomModal
-            mode={mode}
-            socket2={socket}
-            context={{ socketCtx, gameCtx }}
-            closeModal={closeModal}
-          />
+          <SelectRoomModal mode={mode} context={{ socketCtx, gameCtx }} closeModal={closeModal} />
         ),
         t('Select room'),
         t('CLOSE')

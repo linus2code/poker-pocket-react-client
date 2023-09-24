@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
-import { getCardResource } from './domains/CardRes';
+import React, { useContext, useMemo } from 'react';
+import globalContext from '@/context/global/globalContext';
+import gameContext from '@/context/game/gameContext';
+import { getCardResource } from '@/utils/CardRes';
 
-const StyledCard = ({ id }) => {
-  return <div id={id} className="middleCard magictime puffIn"></div>;
+const StyledCard = ({ style }) => {
+  return <div className="middleCard magictime puffIn" style={style}></div>;
 };
 
 // Sleep promise
@@ -36,46 +38,46 @@ function formatMoney(money) {
   return currencyFormat(Number(money), 2, '.', ',');
 }
 
-const BoardCards = ({ board }) => {
-  console.log('init BoardCards', board);
+const BoardCards = () => {
+  const { cardStyle } = useContext(globalContext);
+  const { board } = useContext(gameContext);
 
-  useEffect(() => {
-    console.log('useEffect board');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [board]);
+  const view = useMemo(() => {
+    const current = board.data;
 
-  return (
-    <div className="container">
-      <div className="row justify-center" style={{ justifyContent: 'center' }}>
-        {board.middleCards
-          ? board.middleCards.map((card, index) => (
-              <StyledCard
-                key={'MC' + index}
-                style={
-                  card
-                    ? { backgroundImage: `url(${getCardResource(card)})` }
-                    : { backgroundImage: 'url()' }
+    return current ? (
+      <div className="container">
+        {console.log('RE-RENDER board')}
+        <div className="row justify-center" style={{ justifyContent: 'center' }}>
+          {current.middleCards
+            ? current.middleCards.map((card, index) => {
+                let path = null;
+                if (card) {
+                  path = getCardResource(card, cardStyle);
+                  console.log(card, path);
                 }
-              />
-            ))
-          : ''}
+                return (
+                  <StyledCard
+                    key={'MC' + index}
+                    style={{ backgroundImage: card ? `url(${path})` : 'url()' }}
+                  />
+                );
+              })
+            : ''}
+        </div>
+        <div id="totalPot" className="totalPotText">
+          {current.getTotalPot() > 0 ? formatMoney(current.getTotalPot()) + '$' : ''}
+        </div>
+        <div id="minBet" className="minBetText">
+          {current.getMinBet() > 0 ? 'MB ' + formatMoney(current.getMinBet()) + '$' : ''}
+        </div>
       </div>
-      <div id="totalPot" className="totalPotText">
-        {
-          board.getTotalPot() > 0
-            ? formatMoney(board.getTotalPot()) + '$' // totalPot.style.visibility = 'visible';
-            : '' // totalPot.style.visibility = 'hidden';
-        }
-      </div>
-      <div id="minBet" className="minBetText">
-        {
-          board.getMinBet() > 0
-            ? 'MB ' + formatMoney(board.getMinBet()) + '$' // minBet.style.visibility = 'visible';
-            : '' // minBet.style.visibility = 'hidden';
-        }
-      </div>
-    </div>
-  );
+    ) : (
+      ''
+    );
+  }, [board, cardStyle]);
+
+  return view;
 };
 
 export default BoardCards;
