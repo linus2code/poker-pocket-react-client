@@ -8,6 +8,8 @@ import NewRoom, {
   initRoom,
   statusUpdate,
 } from '@/components/game/domains/Room';
+import { setupSeats, initSeats } from '@/components/game/domains/Seat';
+import Player from '@/components/game/domains/Player';
 import { playChipsHandleFive } from '@/components/audio';
 import RoomStatus from '@/components/game/RoomStatus';
 import RoomTable from '@/components/game/RoomTable';
@@ -18,7 +20,6 @@ const Room = () => {
   const { connId, regRoomHandler } = useContext(socketContext);
 
   const {
-    // players,
     setPlayers,
     enableSounds,
     autoPlay,
@@ -26,7 +27,8 @@ const Room = () => {
     autoPlayCommandRequested,
     setRoomInfo,
     setBoard,
-    // setCtrl,
+    setCtrl,
+    setSeats,
   } = useContext(gameContext);
 
   useEffect(() => {
@@ -45,14 +47,16 @@ const Room = () => {
         roomParameters(jsonData.data);
         break;
       case 'holeCards':
-        // holeCards(jsonData.data);
+        // Hole Cards  ({"players":[{"playerId":0,"cards":["3♠","4♥"]}]})
+        holeCards(jsonData.data);
         break;
       case 'statusUpdate':
         // Status update ({"totalPot":30,"currentStatus":"Betting round 4","middleCards":["2♦","4♥","5♦","A♠","3♠"],"playersData":[{"playerId":1,"playerName":"Anon250","playerMoney":10000,"totalBet":0,"isPlayerTurn":false,"isFold":true,"timeBar":0},{"playerId":2,"playerName":"Anon93","playerMoney":9970,"totalBet":30,"isPlayerTurn":true,"isFold":false,"timeBar":0}],"isCallSituation":false,"isResultsCall":false})
         setRoomUpdate(jsonData.data);
         break;
       case 'lastUserAction':
-        // playerLastActionHandler(jsonData.data);
+        // Example: {"playerId":0,"actionText":"raise"}
+        playerLastActionHandler(jsonData.data);
         break;
       case 'theFlop':
         // The Flop (theFlop: {"middleCards":["8♣","5♣","2♥"]})
@@ -86,20 +90,24 @@ const Room = () => {
   const ctrl = NewCtrl(enableSounds);
   const room = NewRoom(roomInfo, board, ctrl);
 
+  let players = [];
+  const seats = setupSeats();
+
   // init room data
   function roomParameters(rData) {
     console.log('Room params: ' + JSON.stringify(rData));
     initRoom(room);
-    // initSeats();
+    initSeats(seats);
     // getLoggedInUserStatistics(); // Added so refreshing xp needed counter updates automatically
     roomStatusParser(rData);
     boardParser(rData);
     setRoomInfo({ data: roomInfo });
     setBoard({ data: board });
-    // playerParser(rData);
+
+    playerParser(rData);
+    setSeats({ data: seats });
   }
 
-  // eslint-disable-next-line no-unused-vars
   function roomStatusParser(rData) {}
 
   function boardParser(rData) {
@@ -115,7 +123,7 @@ const Room = () => {
 
     return board;
   }
-  // eslint-disable-next-line no-unused-vars
+
   function playerParser(rData) {
     const gameStarted = rData.gameStarted;
     const playerCount = rData.playerCount;
@@ -130,6 +138,7 @@ const Room = () => {
       playerMoneys.push(Number(rData.playersData[i].playerMoney));
       playerIsDealer.push(rData.playersData[i].isDealer);
     }
+
     switch (playerCount) {
       case 1:
         giveSeats(
@@ -197,9 +206,11 @@ const Room = () => {
           gameStarted
         );
         break;
+      default:
+        break;
     }
   }
-  // eslint-disable-next-line no-unused-vars
+
   function giveSeats(
     playerCount,
     seatPositions,
@@ -208,7 +219,23 @@ const Room = () => {
     playerMoneys,
     playerIsDealer,
     gameStarted
-  ) {}
+  ) {
+    players = []; // initialize array
+    console.log('players initialize', players);
+
+    for (let i = 0; i < playerCount; i++) {
+      players.push(
+        new Player(seats[seatPositions[i]], playerIds[i], playerNames[i], playerMoneys[i])
+      );
+      players[i].initPlayer(gameStarted);
+      if (playerIsDealer[i] === true) {
+        players[i].setPlayerAsDealer();
+      }
+    }
+    console.log('players initialize end', players);
+
+    return players;
+  }
 
   // eslint-disable-next-line no-unused-vars
   function statusPlayerUpdate(sData, players) {
@@ -221,11 +248,16 @@ const Room = () => {
       const pTimeBar = playerRaw.timeBar;
       const pId = playerRaw.playerId;
 
-      const player = players[i];
+      let player = players[i];
+      if (player == null) {
+        // problem occure
+        console.log('player null', i);
+        console.log('player null while ', playerRaw);
+      }
 
       player.setTimeBar(pTimeBar);
       if (Number(pId) === Number(connId) && player.tempBet > 0) {
-        // Do nothing
+        // Hero Do nothing
       } else {
         player.setPlayerMoney(pMoney);
         if (sData.collectingPot === false) {
@@ -234,11 +266,17 @@ const Room = () => {
       }
       if (pIsFold) {
         if (!player.isFold) {
+          if (enableSounds) {
+            // playCardFoldOne.play();
+          }
           player.setPlayerFold();
         }
       }
       if (Number(pId) === Number(connId)) {
+        // Hero
         player.setPlayerTurn(pTurn, sData.isCallSituation);
+        ctrl.actionBtnVisibility(pTurn, false);
+
         setActionButtonsEnabled(true);
         if (pTurn && autoPlay && !autoPlayCommandRequested) {
           // getAutoPlayAction();
@@ -246,6 +284,7 @@ const Room = () => {
       }
     }
     if (sData.isResultsCall) {
+      // showdown round
       if (enableSounds) {
         playChipsHandleFive.play();
       }
@@ -255,19 +294,20 @@ const Room = () => {
         player.tempBet = 0;
         player.setPlayerTotalBet(0);
         if (player.playerId !== connId) {
+          // villain
           if (!player.isFold) {
-            player.setPlayerCard(0, true, false);
-            player.setPlayerCard(1, true, false);
+            player.setPlayerCards();
+            player.setShowCards(true);
+            // trigger cards sound
           }
         }
-        var l = sData.roundWinnerPlayerIds.length;
-        for (var w = 0; w < l; w++) {
-          if (Number(sData.roundWinnerPlayerIds[w]) == Number(player.playerId)) {
+        for (var w = 0; w < sData.roundWinnerPlayerIds.length; w++) {
+          if (Number(sData.roundWinnerPlayerIds[w]) === Number(player.playerId)) {
             player.startWinnerGlowAnimation();
             if ('roundWinnerPlayerCards' in sData) {
               var cl = sData.roundWinnerPlayerCards.length;
               for (var c = 0; c < cl; c++) {
-                player.startWinnerGlowCardsAnimation(sData.roundWinnerPlayerCards[c]);
+                player.startWinnerGlowCardsAnimation(sData.roundWinnerPlayerCards[c], board);
               }
             }
           }
@@ -283,10 +323,51 @@ const Room = () => {
 
     statusUpdate(sData, room);
     setRoomInfo({ data: roomInfo });
-    // setBoard({ data: board2 });
-    // setCtrl({ data: ctrl });
-    // statusPlayerUpdate(roomStatus, players);
+    setCtrl({ data: ctrl });
+    statusPlayerUpdate(sData, players);
+    setSeats({ data: seats });
   };
+
+  // ----------------------------------------------------
+  function holeCards(pData) {
+    for (let p = 0; p < pData.players.length; p++) {
+      for (let i = 0; i < players.length; i++) {
+        const playerRaw = pData.players[p];
+
+        const player = players[i];
+        if (Number(player.playerId) === Number(playerRaw.playerId)) {
+          player.playerCards.push(playerRaw.cards[0]);
+          player.playerCards.push(playerRaw.cards[1]);
+        }
+      }
+    }
+    holeCardsAsync();
+  }
+
+  async function holeCardsAsync() {
+    for (let c = 0; c < 2; c++) {
+      for (let i = 0; i < players.length; i++) {
+        const player = players[i];
+        if (!player.isFold) {
+          // await sleep(300);
+          player.setPlayerCards();
+          player.setShowCards(false);
+          // trigger cards sound
+        }
+      }
+    }
+  }
+
+  // Handles last player action animation
+  function playerLastActionHandler(aData) {
+    //console.log(JSON.stringify(aData));
+    for (let i = 0; i < players.length; i++) {
+      const player = players[i];
+      if (player.playerId === aData.playerId) {
+        player.setPlayerActionText(aData.actionText);
+      }
+    }
+  }
 
   async function theFlop(fData) {
     board.middleCards[0] = fData.middleCards[0];
@@ -311,7 +392,7 @@ const Room = () => {
 
   return (
     <>
-      {console.log('RE-RENDER Room')}
+      {/* {console.log('RE-RENDER Room')} */}
       <RoomStatus />
       {/* <!-- Poker table --> */}
       <RoomTable>

@@ -17,7 +17,7 @@ const RoomStatus = () => {
 
     return (
       <StyledCard className="card">
-        {console.log('RE-RENDER RoomStatus')}
+        {/* {console.log('RE-RENDER RoomStatus')} */}
         {/* <!-- Room status --> */}
         <div className="row">
           <div className="col-10">
