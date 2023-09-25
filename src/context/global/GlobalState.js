@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import GlobalContext from './globalContext';
+import { parserCardStyle } from '@/utils/CardRes';
+
+const LS_USE_BLACK_CARDS = 'LS_USE_BLACK_CARDS';
+
+const cards_style = localStorage.getItem(LS_USE_BLACK_CARDS);
 
 const GlobalState = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -8,6 +13,9 @@ const GlobalState = ({ children }) => {
   const [email, setEmail] = useState(null);
   const [tables, setTables] = useState(null);
   const [players, setPlayers] = useState(null);
+  const [roomData, setRoomData] = useState(null);
+
+  const [cardStyle, setCardStyle] = useState(parserCardStyle(cards_style));
 
   return (
     <GlobalContext.Provider
@@ -22,8 +30,12 @@ const GlobalState = ({ children }) => {
         setId,
         tables,
         setTables,
+        roomData,
+        setRoomData,
         players,
         setPlayers,
+        cardStyle,
+        setCardStyle,
       }}
     >
       {children}

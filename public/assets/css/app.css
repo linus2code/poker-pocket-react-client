@@ -181,6 +181,15 @@ body {
 }
 
 
+.ctrl-btn-visiable {
+    visibility: visible;
+}
+
+.ctrl-btn-hide {
+    visibility: hidden;
+}
+
+
 /* 3rd party styling */
 
 .btn3d {
