@@ -68,3 +68,71 @@
   from {width: 100%}
   to {width: 0%}
 }
+
+/* Collect pot movement animation */
+
+@keyframes s1ChipsToPot {
+  0% {
+      transform-origin: 0 0;
+      transform: translateY(0%);
+  }
+  100% {
+      transform-origin: 0 0;
+      transform: translate3D(80px, -120px, 0); /* X, Y, ? */
+  }
+}
+
+@keyframes s2ChipsToPot {
+  0% {
+      transform-origin: 0 0;
+      transform: translateY(0%);
+  }
+  100% {
+      transform-origin: 0 0;
+      transform: translate3D(190px, 40px, 0); /* X, Y, ? */
+  }
+}
+
+@keyframes s3ChipsToPot {
+  0% {
+      transform-origin: 0 0;
+      transform: translateY(0%);
+  }
+  100% {
+      transform-origin: 0 0;
+      transform: translate3D(70px, 160px, 0); /* X, Y, ? */
+  }
+}
+
+@keyframes s4ChipsToPot {
+  0% {
+      transform-origin: 0 0;
+      transform: translateY(0%);
+  }
+  100% {
+      transform-origin: 0 0;
+      transform: translate3D(-60px, 160px, 0); /* X, Y, ? */
+  }
+}
+
+@keyframes s5ChipsToPot {
+  0% {
+      transform-origin: 0 0;
+      transform: translateY(0%);
+  }
+  100% {
+      transform-origin: 0 0;
+      transform: translate3D(-190px, 40px, 0); /* X, Y, ? */
+  }
+}
+
+@keyframes s6ChipsToPot {
+  0% {
+      transform-origin: 0 0;
+      transform: translateY(0%);
+  }
+  100% {
+      transform-origin: 0 0;
+      transform: translate3D(-60px, -120px, 0); /* X, Y, ? */
+  }
+}

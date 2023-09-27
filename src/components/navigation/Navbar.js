@@ -45,7 +45,6 @@ const Navbar = ({ loggedIn }) => {
   }
 
   const openRoomModal = (mode) => {
-    console.log('socket', socket);
     if (socket) {
       openModal(
         () => (

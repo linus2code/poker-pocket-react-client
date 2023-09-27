@@ -14,7 +14,7 @@ const RoomTable = ({ children }) => {
           <div className="col">
             {/* <!-- Seat layout --> */}
             {current[2] && current[2].seatFrame ? (
-              <SeatUI className="float-right" seat={current[2]} betRight />
+              <SeatUI loc="s3" className="float-right" seat={current[2]} betRight />
             ) : (
               ''
             )}
@@ -24,7 +24,7 @@ const RoomTable = ({ children }) => {
           <div className="col">
             {/* <!-- Seat layout --> */}
             {current[3] && current[3].seatFrame ? (
-              <SeatUI className="float-left" seat={current[3]} betLeft />
+              <SeatUI loc="s4" className="float-left" seat={current[3]} betLeft />
             ) : (
               ''
             )}
@@ -36,7 +36,11 @@ const RoomTable = ({ children }) => {
         <div className="row" style={{ height: '140px' }}>
           <div className="col">
             {/* <!-- Seat layout --> */}
-            {current[1] && current[1].seatFrame ? <SeatUI seat={current[1]} betRight /> : ''}
+            {current[1] && current[1].seatFrame ? (
+              <SeatUI loc="s2" seat={current[1]} betRight />
+            ) : (
+              ''
+            )}
             {/* <!-- /Seat --> */}
           </div>
           <div className="col-5">
@@ -46,7 +50,11 @@ const RoomTable = ({ children }) => {
           </div>
           <div className="col">
             {/* <!-- Seat layout --> */}
-            {current[4] && current[4].seatFrame ? <SeatUI seat={current[4]} betLeft /> : ''}
+            {current[4] && current[4].seatFrame ? (
+              <SeatUI loc="s5" seat={current[4]} betLeft />
+            ) : (
+              ''
+            )}
           </div>
         </div>
 
@@ -54,7 +62,7 @@ const RoomTable = ({ children }) => {
         <div className="row" style={{ height: '140px' }}>
           <div className="col">
             {current[0] && current[0].seatFrame ? (
-              <SeatUI className="float-right" seat={current[0]} betRight />
+              <SeatUI loc="s1" className="float-right" seat={current[0]} betRight />
             ) : (
               ''
             )}
@@ -63,7 +71,7 @@ const RoomTable = ({ children }) => {
           <div className="col">
             {/* <!-- Seat layout --> */}
             {current[5] && current[5].seatFrame ? (
-              <SeatUI className="float-left" seat={current[5]} betLeft />
+              <SeatUI loc="s6" className="float-left" seat={current[5]} betLeft />
             ) : (
               ''
             )}

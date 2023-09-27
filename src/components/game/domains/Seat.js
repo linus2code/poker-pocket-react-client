@@ -37,6 +37,7 @@ export default function Seat(seatId, elemCardView, seatName) {
   this.seatActionFrame = 'Check';
   this.cardAnimation = false;
   this.seatDealerChip = true;
+  this.seatCollectChips = true;
   this.seatWinningGlowCard0 = false;
   this.seatWinningGlowCard1 = false;
 }
@@ -52,6 +53,7 @@ Seat.prototype.initSeat = function () {
   this.setTotalBet(0);
   this.setShowCards(false);
   this.resetCards();
+  this.seatDealerChip = false;
   this.setLastAction(null);
   this.setDealerChipVisibility(false);
   this.seatWinningGlowCard0 = false;
@@ -156,16 +158,11 @@ Seat.prototype.setDealerChipVisibility = function (bool) {
 };
 
 Seat.prototype.seatCollectChipsToPot = function () {
+  this.seatCollectChips = true;
   var _this = this;
-  this.seatBetFrame.style.animation =
-    this.seatBetFrame.getAttribute('id').substring(0, 2) + 'ChipsToPot 0.5s alternate';
-  console.log(
-    'collect pot full animation name was: ' +
-      this.seatBetFrame.getAttribute('id').substring(0, 2) +
-      'ChipsToPot 0.5s alternate'
-  );
   setTimeout(function () {
-    _this.seatBetFrame.style.animation = '';
+    _this.seatCollectChips = false;
     _this.setBetFrameVisibility(false);
+    // TODO: trigger render
   }, 500);
 };

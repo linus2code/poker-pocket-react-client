@@ -33,19 +33,17 @@ const WebSocketProvider = ({ children }) => {
   // From server commands a.k.a. messages
   const onMessageHandler = (jsonData) => {
     // console.log(JSON.stringify(jsonData));
+    console.log('room jsonData ', jsonData.key);
     if (onRoomHandler && onRoomHandler(jsonData)) {
-      console.log('room jsonData ' + jsonData.key);
       return;
     }
 
-    console.log('main jsonData', jsonData.key);
     switch (jsonData.key) {
       case 'connectionId': {
         const CONNECTION_ID = Number(jsonData.connectionId);
         setConnId(CONNECTION_ID);
         const SOCKET_KEY = jsonData.socketKey;
         setSocketKey(SOCKET_KEY);
-        console.log('My socket key: ' + SOCKET_KEY);
         openRoomModal('all');
         // if (localStorage.getItem(LS_LOGGED_IN) === 'true') {
         //   setLoggedInUserParams();
@@ -148,6 +146,7 @@ const WebSocketProvider = ({ children }) => {
         socket,
         socketId,
         connId,
+        setConnId,
         socketKey,
         reconnect,
         cleanUp,

@@ -9,7 +9,7 @@ import { getCardResource } from '@/utils/CardRes';
 //   return new Promise((resolve) => setTimeout(resolve, ms));
 // }
 
-const SeatUI = ({ className, connId, seat, betLeft, betRight }) => {
+const SeatUI = ({ loc, className, connId, seat, betLeft, betRight }) => {
   const { cardStyle } = useContext(globalContext);
 
   // async function hideLastActionAsync() {
@@ -19,7 +19,7 @@ const SeatUI = ({ className, connId, seat, betLeft, betRight }) => {
 
   const actionView = useMemo(() => {
     const seatActionFrame = seat.seatActionFrame;
-    console.log('actionView', seat.seatActionFrame);
+    // console.log('actionView', seat.seatActionFrame);
     // hideLastActionAsync();
 
     return (
@@ -118,7 +118,11 @@ const SeatUI = ({ className, connId, seat, betLeft, betRight }) => {
             id="BetFrame"
             className={`container ${seat.seatDoBet ? 'magictime puffIn' : ''} bet-pos ${
               betLeft ? 'bet-left' : ''
-            } ${betRight ? 'bet-right' : ''}`}
+            } ${betRight ? 'bet-right' : ''}
+            `}
+            style={{
+              animation: seat.seatCollectChips ? loc + 'ChipsToPot 0.5s alternate' : '',
+            }}
           >
             <div className="moneyView"></div>
             <div id="TotalBet" className="betTexts">
