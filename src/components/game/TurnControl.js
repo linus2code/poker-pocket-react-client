@@ -25,7 +25,7 @@ const StyledActBtn = ({ className, onClick, label }) => {
 };
 
 const TurnControl = () => {
-  const { roomId, ctrl, players, hero } = useContext(gameContext);
+  const { roomId, ctrl, players, heroTurn } = useContext(gameContext);
   const { socket, connId, socketKey } = useContext(socketContext);
 
   let isloading = false;
@@ -124,20 +124,10 @@ const TurnControl = () => {
   }
 
   function myRaiseHelper() {
-    let me = hero;
-
-    // for (let i = 0; i < players.length; i++) {
-    //   const player = players[i];
-
-    //   if (player.playerId === connId) {
-    //     //     me = player;
-    //     //     break;
-    //   }
-    // }
-
-    if (me) {
-      const rTempBet = me.tempBet;
-      me.tempBet = 0;
+    const hero = heroTurn.data;
+    if (hero) {
+      const rTempBet = hero.tempBet;
+      hero.tempBet = 0;
       return rTempBet;
     }
     return 0;
@@ -152,22 +142,13 @@ const TurnControl = () => {
 
   function checkBtnClick() {
     if (!isloading) {
-      let me = hero;
-      // for (let i = 0; i < players.length; i++) {
-      //   const player = players[i];
-
-      //   if (player.playerId === connId) {
-      //     me = player;
-      //     break;
-      //   }
-      // }
-
-      if (me) {
-        if (me.tempBet > 0) {
+      const hero = heroTurn.data;
+      if (hero) {
+        if (hero.tempBet > 0) {
           toast.info('You have already thrown chips in... raising...');
 
-          const rTempBet = me.tempBet;
-          me.tempBet = 0;
+          const rTempBet = hero.tempBet;
+          hero.tempBet = 0;
           setRaise(rTempBet);
         } else {
           setCheck();
@@ -187,7 +168,7 @@ const TurnControl = () => {
 
   const view = useMemo(() => {
     const current = ctrl.data;
-    const me = hero.data;
+    const hero = heroTurn.data;
 
     return (
       // <!-- Bottom controls -->
@@ -195,7 +176,7 @@ const TurnControl = () => {
         className="card"
         style={{ backgroundColor: '#434343', width: '100%', marginTop: '-20px' }}
       >
-        {console.log('RE-RENDER TurnControl', me, connId)}
+        {/* {console.log('RE-RENDER TurnControl', hero)} */}
         <div className="container" style={{ width: '100%', padding: '10px', marginLeft: '10%' }}>
           <div className="row" style={{ width: '100%' }}>
             <div className="col">
@@ -205,7 +186,7 @@ const TurnControl = () => {
               <StyledBetBtn onClick={betFiveHundredClick} label="+500" />
               <StyledBetBtn onClick={betAllInClick} label="All In" />
             </div>
-            {me && me.isPlayerTurn ? (
+            {hero && hero.isPlayerTurn ? (
               <div className="col">
                 <StyledActBtn
                   onClick={foldBtnClick}
@@ -232,7 +213,7 @@ const TurnControl = () => {
       </div>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ctrl, hero]);
+  }, [ctrl, heroTurn]);
 
   return view;
 };

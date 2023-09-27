@@ -55,7 +55,8 @@ const RoomStatus = () => {
               <div className="row">
                 <div className="col-sm">
                   <div id="roomStatusText" style={{ color: 'white', textAlign: 'left' }}>
-                    {current.getRoomStatusText()}
+                    <span style={{ marginRight: '30px' }}>{current.getRoomStatusText()}</span>
+                    <span style={{ marginRight: '30px' }}>{current.getRoomTurnText()}</span>
                   </div>
                 </div>
               </div>

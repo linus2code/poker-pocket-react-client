@@ -20,6 +20,7 @@ export function initSeats(seats) {
 
 export default function Seat(seatId, elemCardView, seatName) {
   this.id = seatId;
+  this.refreshLastAction = null;
   this.seatFrame = true;
   // null: no card; '': hide cards
   this.seatCard0 = '';
@@ -30,11 +31,11 @@ export default function Seat(seatId, elemCardView, seatName) {
   this.seatName = seatName;
   this.seatMoney = 10000;
   this.seatTurn = false;
-  this.seatTimeBar = '50%';
+  this.seatTimeBar = 5000;
   this.seatBetFrame = true;
   this.seatTotalBet = 10000;
   this.seatDoBet = false;
-  this.seatActionFrame = 'Check';
+  this.seatLastAction = 'Check';
   this.cardAnimation = false;
   this.seatDealerChip = true;
   this.seatCollectChips = true;
@@ -43,6 +44,7 @@ export default function Seat(seatId, elemCardView, seatName) {
 }
 
 Seat.prototype.initSeat = function () {
+  this.refreshLastAction = {};
   this.setSeatFrameVisibility(false);
   this.setName('-');
   this.setMoney(0);
@@ -56,6 +58,7 @@ Seat.prototype.initSeat = function () {
   this.seatDealerChip = false;
   this.setLastAction(null);
   this.setDealerChipVisibility(false);
+  this.cardAnimation = false;
   this.seatWinningGlowCard0 = false;
   this.seatWinningGlowCard1 = false;
 };
@@ -86,20 +89,6 @@ Seat.prototype.clearCards = function () {
   this.seatCard1 = null;
 };
 
-// function setCard(seatCard, cardStr, playerId, isResultsCall, isMiddleOfTheGame) {
-//   // trigger cards sound
-//   if (enableSounds && !isMiddleOfTheGame) {
-//     playCardSlideSix.play();
-//   }
-//   if (playerId === CONNECTION_ID || isResultsCall) {
-//     seatCard.style.backgroundImage = 'url(' + getCardResource(cardStr) + ')';
-//   } else {
-//     seatCard.style.backgroundImage = 'url(' + imgFolder + 'card_top_red.png' + ')';
-//   }
-//   seatCard.classList.toggle('magictime');
-//   seatCard.classList.toggle('puffIn');
-// }
-
 Seat.prototype.setCards = function (cardStr0, cardStr1) {
   this.seatCard0 = cardStr0;
   this.seatCard1 = cardStr1;
@@ -125,8 +114,8 @@ Seat.prototype.setTurn = function (bool) {
   this.seatTurn = bool;
 };
 
-Seat.prototype.setTimeBar = function (progress) {
-  this.seatTimeBar = progress;
+Seat.prototype.setTimeBar = function (time) {
+  this.seatTimeBar = time;
 };
 
 Seat.prototype.setBetFrameVisibility = function (bool) {
@@ -150,7 +139,7 @@ Seat.prototype.seatStartWinningGlowCardAnimation = function (cardNumber) {
 };
 
 Seat.prototype.setLastAction = function (actionStr) {
-  this.seatActionFrame = actionStr;
+  this.seatLastAction = actionStr;
 };
 
 Seat.prototype.setDealerChipVisibility = function (bool) {

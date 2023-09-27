@@ -8,6 +8,7 @@ export const playCardOpenPackage = new Howl({
   src: [audioDir + 'open_package.wav'],
 });
 
+// fold card
 export const playCardFoldOne = new Howl({
   src: [audioDir + 'fold_one.wav'],
 });
@@ -24,6 +25,7 @@ export const playChipsHandleFive = new Howl({
   src: [audioDir + 'chips_handle_five.wav'],
 });
 
+// turn or river ?
 export const playCardSlideSix = new Howl({
   src: [audioDir + 'card_slide_six.wav'],
 });

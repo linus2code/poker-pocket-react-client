@@ -106,7 +106,7 @@ const SettingsBar = () => {
       <div className="col-4">
         <footer className="footer">
           <div style={{ color: '#FFFFFF' }}>♣ ♦ ♥ ♠</div>
-          <div style={{ color: '#FFFFFF' }}>&copy; Nitramite 2017 - MK</div>
+          <div style={{ color: '#FFFFFF' }}>&copy; Nitramite 2023</div>
           <div style={{ color: '#FFFFFF' }}>Graphics Raphael Ciribelly</div>
         </footer>
       </div>

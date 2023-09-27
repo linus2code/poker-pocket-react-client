@@ -58,7 +58,6 @@ body {
     color: #FFFFFF;
     font-size: 30px;
     margin-top: -10px;
-
 }
 
 .minBetText {
@@ -145,6 +144,18 @@ body {
     animation-duration: 1.0s;
 }
 
+.action-animation {
+    opacity: 0;
+    animation: fadenum 1.5s;
+}
+  
+.card-glow {
+    animation: slideUp 1.0s infinite alternate;
+}
+
+.card-animation {
+    animation: winnerPulse 0.5s infinite alternate;
+}
 
 /* animation:winnerPulse 0.5s infinite alternate; */
 @keyframes winnerPulse {
@@ -167,6 +178,16 @@ body {
         transform-origin: 0 0;
         transform: translateY(-20%);
     }
+}
+
+@keyframes fadenum {
+    0% {opacity: 0; transform-origin:50% 50%;transform:scale(2,2); filter:blur(2px)}
+    100% {opacity: 1;transform-origin:50% 50%;transform:scale(1,1); filter:blur(0)}
+}
+  
+@keyframes lineburn {
+    from { width: 100% }
+    to { width: 0% }
 }
 
 
@@ -292,7 +313,7 @@ body {
     }
     100% {
         transform-origin: 0 0;
-        transform: translate3D(100px, -60px, 0); /* X, Y, ? */
+        transform: translate3D(80px, -120px, 0); /* X, Y, ? */
     }
 }
 
@@ -347,7 +368,7 @@ body {
     }
     100% {
         transform-origin: 0 0;
-        transform: translate3D(-100px, -60px, 0); /* X, Y, ? */
+        transform: translate3D(-60px, -120px, 0); /* X, Y, ? */
     }
 }
 

@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from 'react';
-import styles from './SeatUI.module.css';
+import styles from './SeatSlot.module.css';
 import globalContext from '@/context/global/globalContext';
 import { formatMoney } from '@/utils/Money';
 import { getCardResource } from '@/utils/CardRes';
@@ -9,28 +9,32 @@ import { getCardResource } from '@/utils/CardRes';
 //   return new Promise((resolve) => setTimeout(resolve, ms));
 // }
 
-const SeatUI = ({ loc, className, connId, seat, betLeft, betRight }) => {
+const SeatSlot = ({ pos, className, connId, seat, betLeft, betRight }) => {
   const { cardStyle } = useContext(globalContext);
 
   // async function hideLastActionAsync() {
   //   await sleep(1000);
-  //   seat.seatActionFrame = null;
+  //   seat.seatLastAction = null;
   // }
 
   const actionView = useMemo(() => {
-    const seatActionFrame = seat.seatActionFrame;
-    // console.log('actionView', seat.seatActionFrame);
+    const seatLastAction = seat.seatLastAction;
+    // console.log('actionView', seat.seatLastAction);
     // hideLastActionAsync();
+
+    console.log('seatLastAction', seat.id, seat.seatLastAction);
 
     return (
       <div className="container player-action-pos">
-        <div className="lastActionTexts magicTimeAction puffIn action-animation">
-          {seatActionFrame}
-        </div>
+        {seatLastAction ? (
+          <div className="lastActionTexts magicTimeAction puffIn action-animation">
+            {seatLastAction}
+          </div>
+        ) : null}
       </div>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seat, seat.seatActionFrame]);
+  }, [seat, seat.refreshLastAction]);
 
   const cardsView = useMemo(() => {
     let path0 = null;
@@ -58,7 +62,7 @@ const SeatUI = ({ loc, className, connId, seat, betLeft, betRight }) => {
       <div className="row">
         <div className="col" style={{ marginLeft: '22px' }}>
           <div
-            className={`cardOne magictime puffIn ${seat.seatWinningGlowCard0 && 'card-glow'}`}
+            className={`cardOne magictime puffIn ${seat.seatWinningGlowCard0 ? 'card-glow' : ''}`}
             style={{
               backgroundImage: seat.seatCard0 ? `url(${path0})` : seat.seatIsFold ? 'url()' : '',
             }}
@@ -66,7 +70,7 @@ const SeatUI = ({ loc, className, connId, seat, betLeft, betRight }) => {
         </div>
         <div className="col" style={{ marginLeft: '-20px' }}>
           <div
-            className={`cardTwo magictime puffIn ${seat.seatWinningGlowCard1 && 'card-glow'}`}
+            className={`cardTwo magictime puffIn ${seat.seatWinningGlowCard1 ? 'card-glow' : ''}`}
             style={{
               backgroundImage: seat.seatCard1 ? `url(${path1})` : seat.seatIsFold ? 'url()' : '',
             }}
@@ -101,14 +105,19 @@ const SeatUI = ({ loc, className, connId, seat, betLeft, betRight }) => {
             </div>
             <div className="progress">
               <div
-                className={`progress-bar ${
-                  seat.seatTurn && seat.seatTimeBar > 0 ? 'p-time-bar' : ''
-                }`}
+                className="progress-bar"
                 role="progressbar"
                 id="TimeBar"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                style={{ width: seat.seatTimeBar + '%' }}
+                style={
+                  seat.seatTimeBar > 0
+                    ? {
+                        width: '100%',
+                        animation: `lineburn ${seat.seatTimeBar / 1000}s linear forwards`,
+                      }
+                    : {}
+                }
               ></div>
             </div>
           </div>
@@ -121,7 +130,7 @@ const SeatUI = ({ loc, className, connId, seat, betLeft, betRight }) => {
             } ${betRight ? 'bet-right' : ''}
             `}
             style={{
-              animation: seat.seatCollectChips ? loc + 'ChipsToPot 0.5s alternate' : '',
+              animation: seat.seatCollectChips ? pos + 'ChipsToPot 0.5s alternate' : '',
             }}
           >
             <div className="moneyView"></div>
@@ -138,4 +147,4 @@ const SeatUI = ({ loc, className, connId, seat, betLeft, betRight }) => {
   );
 };
 
-export default SeatUI;
+export default SeatSlot;

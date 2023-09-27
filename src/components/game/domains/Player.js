@@ -93,8 +93,7 @@ Player.prototype.setPlayerAsDealer = function () {
 
 // Cards that were responsible for output result comes in as winningCards
 Player.prototype.startWinnerGlowCardsAnimation = function (winningCards, winningBoards) {
-  const l = winningCards.length;
-  for (var i = 0; i < l; i++) {
+  for (let i = 0; i < winningCards.length; i++) {
     if (winningCards[i] != null || winningCards[i] !== 'null') {
       switch (winningCards[i]) {
         case this.playerCards[0]:

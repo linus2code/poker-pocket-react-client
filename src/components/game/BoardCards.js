@@ -4,10 +4,6 @@ import gameContext from '@/context/game/gameContext';
 import { getCardResource } from '@/utils/CardRes';
 import { formatMoney } from '@/utils/Money';
 
-const StyledCard = ({ style }) => {
-  return <div className="middleCard magictime puffIn" style={style}></div>;
-};
-
 // Sleep promise
 // function sleep(ms) {
 //   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -31,9 +27,14 @@ const BoardCards = () => {
                   path = getCardResource(card, cardStyle);
                 }
                 return (
-                  <StyledCard
+                  <div
+                    className={`middleCard magictime puffIn ${
+                      current.middleCardsSlideUp[index] ? 'card-glow' : ''
+                    }`}
                     key={'MC' + index}
-                    style={{ backgroundImage: card ? `url(${path})` : 'url()' }}
+                    style={{
+                      backgroundImage: card ? `url(${path})` : 'url()',
+                    }}
                   />
                 );
               })

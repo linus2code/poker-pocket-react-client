@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import GameContext from './gameContext';
 import { NewRoomInfo, NewBoard, NewCtrl } from '@/components/game/domains/Room';
 import { setupSeats } from '@/components/game/domains/Seat';
@@ -16,16 +16,19 @@ const GameState = ({ children }) => {
   const [roomInfo, setRoomInfo] = useState({ data: NewRoomInfo() });
   const [board, setBoard] = useState({ data: NewBoard(enableSounds) });
   const [ctrl, setCtrl] = useState({ data: NewCtrl(enableSounds) });
-  const [seats, setSeats] = useState({ data: setupSeats() });
-  const [hero, setHero] = useState({ data: null });
+
+  const seatsRef = useRef(setupSeats());
+
+  const [seats, setSeats] = useState({ data: seatsRef.current });
+  const [heroTurn, setHeroTurn] = useState({ data: null });
 
   return (
     <GameContext.Provider
       value={{
         roomId,
         setRoomId,
-        hero,
-        setHero,
+        heroTurn,
+        setHeroTurn,
         players,
         setPlayers,
         enableSounds,

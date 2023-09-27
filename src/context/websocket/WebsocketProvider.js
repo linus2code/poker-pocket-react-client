@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-// import io from 'socket.io-client';
 import { toast } from 'react-toastify';
 import config from '@/clientConfig';
 import SocketContext from './socketContext';
@@ -33,7 +32,7 @@ const WebSocketProvider = ({ children }) => {
   // From server commands a.k.a. messages
   const onMessageHandler = (jsonData) => {
     // console.log(JSON.stringify(jsonData));
-    console.log('room jsonData ', jsonData.key);
+    // console.log('room jsonData ', jsonData.key);
     if (onRoomHandler && onRoomHandler(jsonData)) {
       return;
     }
@@ -51,6 +50,7 @@ const WebSocketProvider = ({ children }) => {
         break;
       }
       case 'getRooms':
+        // Example: {"key":"getRooms","data":[{"roomId":0,"roomName":"Room 0","playerCount":0,"maxSeats":6},{"roomId":1,"roomName":"Room 1","playerCount":0,"maxSeats":6},{"roomId":2,"roomName":"Room 2","playerCount":0,"maxSeats":6}]}
         setTables(jsonData.data);
         break;
       case 'getSpectateRooms':

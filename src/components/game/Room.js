@@ -1,5 +1,4 @@
 import React from 'react';
-
 import RoomStatus from '@/components/game/RoomStatus';
 import RoomTable from '@/components/game/RoomTable';
 import BoardCards from '@/components/game/BoardCards';
