@@ -4,25 +4,11 @@ import globalContext from '@/context/global/globalContext';
 import { formatMoney } from '@/utils/Money';
 import { getCardResource } from '@/utils/CardRes';
 
-// Sleep promise
-// function sleep(ms) {
-//   return new Promise((resolve) => setTimeout(resolve, ms));
-// }
-
 const SeatSlot = ({ pos, className, connId, seat, betLeft, betRight }) => {
   const { cardStyle } = useContext(globalContext);
 
-  // async function hideLastActionAsync() {
-  //   await sleep(1000);
-  //   seat.seatLastAction = null;
-  // }
-
   const actionView = useMemo(() => {
     const seatLastAction = seat.seatLastAction;
-    // console.log('actionView', seat.seatLastAction);
-    // hideLastActionAsync();
-
-    console.log('seatLastAction', seat.id, seat.seatLastAction);
 
     return (
       <div className="container player-action-pos">
