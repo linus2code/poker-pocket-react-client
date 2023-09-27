@@ -1,4 +1,4 @@
-var imgFolder = './assets/images/';
+const imgFolder = './assets/images/';
 
 export const parserCardStyle = (val) => {
   var styleStr = '';
@@ -10,6 +10,10 @@ export const parserCardStyle = (val) => {
 };
 
 export const getCardResource = (cardStr, styleStr) => {
+  if (cardStr === '') {
+    return imgFolder + 'card_top_red.png';
+  }
+
   var suit = getSuit(cardStr);
   var value = getValue(cardStr);
   if (suit === undefined || suit === '' || value === undefined || value === '') {

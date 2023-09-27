@@ -1,0 +1,43 @@
+
+.root {
+  :global(.SeatFrame) {
+    position: relative;
+    /* display: flex; */
+  }
+
+  :global(.float-right) {
+    float: right;
+  }
+
+  :global(.float-left) {
+    float: left;
+  }
+
+  :global(.bet-pos) {
+    position: absolute;
+    bottom: 10%;
+  }
+
+  :global(.bet-right) {
+    float: left;
+    left: 90%;
+    top: 30%;
+  }
+
+  :global(.bet-left) {
+    float: left;
+    left: -25%;
+    top: 30%;
+  }
+
+  :global(.betTexts) {
+    /* text-align: center; */
+    color: #FFFFFF;
+  }
+
+  :global(.player-action-pos) {
+    position: absolute;
+    z-index: 10;
+    top: -22%;
+  }
+}

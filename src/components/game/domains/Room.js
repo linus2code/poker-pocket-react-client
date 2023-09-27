@@ -1,9 +1,5 @@
 import { playCardTakeOutFromPackageOne, playCardSlideSix } from '@/components/audio';
 
-const animateMiddleCard0 = (middleCard) => {
-  // middleCard.style.animation = 'slideUp 1.0s infinite alternate';
-};
-
 export const NewBoard = (enableSounds) => {
   let totalPot = 240;
   let minBet = 100;
@@ -11,6 +7,11 @@ export const NewBoard = (enableSounds) => {
   const middleCards = [];
   for (let m = 0; m < 5; m++) {
     middleCards.push(null);
+  }
+
+  const middleCardsSlideUp = [];
+  for (let m = 0; m < 5; m++) {
+    middleCardsSlideUp.push(null);
   }
 
   const resetMiddleCards = () => {
@@ -26,14 +27,13 @@ export const NewBoard = (enableSounds) => {
   };
 
   const startWinnerCardGlowAnimation = (cardNumber) => {
-    if (cardNumber < 0 || cardNumber > 5) return;
-    animateMiddleCard0(middleCards[cardNumber]);
+    if (cardNumber < 0 || cardNumber > 4) return;
+
+    middleCardsSlideUp[cardNumber] = true;
   };
 
   const setTotalPot = (money) => {
-    if (money > 0) {
-      totalPot = money;
-    }
+    totalPot = money;
   };
 
   const getTotalPot = () => {
@@ -52,6 +52,7 @@ export const NewBoard = (enableSounds) => {
 
   return {
     middleCards,
+    middleCardsSlideUp,
     setTotalPot,
     getTotalPot,
     setMinBet,
@@ -69,6 +70,7 @@ export const NewRoomInfo = () => {
   let deckStatus = '♦ Deck: -';
   let deckCardsBurned = '♦ Burned: -';
   let roomStatusText = 'Wait for parameters...';
+  let roomTurnText = 'No Turn...';
 
   const setRoomStatusText = (statusStr) => {
     roomStatusText = statusStr;
@@ -76,6 +78,14 @@ export const NewRoomInfo = () => {
 
   const getRoomStatusText = () => {
     return roomStatusText;
+  };
+
+  const setRoomTurnText = (turnStr) => {
+    roomTurnText = turnStr;
+  };
+
+  const getRoomTurnText = () => {
+    return roomTurnText;
   };
 
   const setRoomName = (val) => {
@@ -120,12 +130,14 @@ export const NewRoomInfo = () => {
 
   return {
     getRoomStatusText,
+    getRoomTurnText,
     getRoomName,
     getRoomSpectatorCount,
     getRoomWaitingPlayersCount,
     getRoomDeckStatus,
     getRoomDeckBurnedCount,
     setRoomStatusText,
+    setRoomTurnText,
     setRoomName,
     setRoomSpectatorCount,
     setRoomWaitingPlayersCount,
@@ -200,9 +212,10 @@ export const initCtrl = (ctrl) => {
 };
 
 // ----------------------------------------------------
-export const statusUpdate = (sData, room) => {
+export const roomUpdate = (sData, room) => {
   const roomInfo = room.roomInfo;
   roomInfo.setRoomStatusText(sData.currentStatus);
+  roomInfo.setRoomTurnText(sData.currentTurnText);
   roomInfo.setRoomName(sData.roomName);
   roomInfo.setRoomSpectatorCount(sData.spectatorsCount);
   roomInfo.setRoomWaitingPlayersCount(sData.appendPlayersCount);

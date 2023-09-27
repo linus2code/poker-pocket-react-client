@@ -1,20 +1,32 @@
-import React from 'react';
-import SeatUI from './SeatUI';
+import React, { useContext } from 'react';
+import SeatSlot from './SeatSlot';
+import gameContext from '@/context/game/gameContext';
 
 const RoomTable = ({ children }) => {
+  const { seats } = useContext(gameContext);
+
+  const current = seats.data;
   return (
     <div id="pokerTable" className="poker-table">
       {/* <!-- Top layout --> */}
       <div className="row" style={{ height: '140px' }}>
         <div className="col">
           {/* <!-- Seat layout --> */}
-          <SeatUI className="float-right" id={'s3'} name={'Seat 3'} moneylbl={'10,000$'} betRight />
+          {current[2] && current[2].seatFrame ? (
+            <SeatSlot pos="s3" className="float-right" seat={current[2]} betRight />
+          ) : (
+            ''
+          )}
           {/* <!-- /Seat --> */}
         </div>
         <div className="col-2">{/* <!-- POT INFO --> */}</div>
         <div className="col">
           {/* <!-- Seat layout --> */}
-          <SeatUI className="float-left" id={'s4'} name={'Seat 4'} moneylbl={'10,000$'} betLeft />
+          {current[3] && current[3].seatFrame ? (
+            <SeatSlot pos="s4" className="float-left" seat={current[3]} betLeft />
+          ) : (
+            ''
+          )}
           {/* <!-- /Seat --> */}
         </div>
       </div>
@@ -23,7 +35,11 @@ const RoomTable = ({ children }) => {
       <div className="row" style={{ height: '140px' }}>
         <div className="col">
           {/* <!-- Seat layout --> */}
-          <SeatUI middle id={'s2'} name={'Seat 2'} moneylbl={'10,000$'} betRight />
+          {current[1] && current[1].seatFrame ? (
+            <SeatSlot pos="s2" seat={current[1]} betRight />
+          ) : (
+            ''
+          )}
           {/* <!-- /Seat --> */}
         </div>
         <div className="col-5">
@@ -33,19 +49,31 @@ const RoomTable = ({ children }) => {
         </div>
         <div className="col">
           {/* <!-- Seat layout --> */}
-          <SeatUI middle id={'s5'} name={'Seat 5'} moneylbl={'10,000$'} betLeft />
+          {current[4] && current[4].seatFrame ? (
+            <SeatSlot pos="s5" seat={current[4]} betLeft />
+          ) : (
+            ''
+          )}
         </div>
       </div>
 
       {/* <!-- Bottom layout --> */}
       <div className="row" style={{ height: '140px' }}>
         <div className="col">
-          <SeatUI className="float-right" id={'s1'} name={'Seat 1'} moneylbl={'10,000$'} betRight />
+          {current[0] && current[0].seatFrame ? (
+            <SeatSlot pos="s1" className="float-right" seat={current[0]} betRight />
+          ) : (
+            ''
+          )}
         </div>
         <div className="col-2">{/* <!-- Empty space --> */}</div>
         <div className="col">
           {/* <!-- Seat layout --> */}
-          <SeatUI className="float-left" id={'s6'} name={'Seat 6'} moneylbl={'10,000$'} betLeft />
+          {current[5] && current[5].seatFrame ? (
+            <SeatSlot pos="s6" className="float-left" seat={current[5]} betLeft />
+          ) : (
+            ''
+          )}
         </div>
       </div>
     </div>

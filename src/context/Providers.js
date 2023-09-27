@@ -10,6 +10,7 @@ import ModalProvider from './modal/ModalProvider';
 import OfflineProvider from './offline/OfflineProvider';
 import WebSocketProvider from './websocket/WebsocketProvider';
 import GameState from './game/GameState';
+import RoomState from './room/RoomState';
 
 const Providers = ({ children }) => (
   <BrowserRouter>
@@ -21,7 +22,9 @@ const Providers = ({ children }) => (
             <OfflineProvider>
               <WebSocketProvider>
                 <GameState>
-                  {children}
+                  <RoomState>
+                    {children}
+                  </RoomState>
                 </GameState>
               </WebSocketProvider>
             </OfflineProvider>

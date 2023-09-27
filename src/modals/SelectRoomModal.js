@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-// import styled from 'styled-components';
 import globalContext from '@/context/global/globalContext';
 
 const playerNickname = 'Anon' + Math.floor(Math.random() * 1000);
@@ -112,8 +111,6 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
   }, [tables]);
 
   const parseRooms = (rData) => {
-    // Example: {"key":"getRooms","data":[{"roomId":0,"roomName":"Room 0","playerCount":0,"maxSeats":6},{"roomId":1,"roomName":"Room 1","playerCount":0,"maxSeats":6},{"roomId":2,"roomName":"Room 2","playerCount":0,"maxSeats":6}]}
-    console.log(JSON.stringify(rData));
     setRoomsData(rData);
   };
 
