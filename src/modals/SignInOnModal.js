@@ -13,24 +13,15 @@ const SignInOnModal = ({ mode, context, closeModal }) => {
   const { socketCtx } = context;
   const { socket, connId, socketKey, reconnect } = socketCtx;
 
-  const onAuthHandler = (jsonData) => {
-    switch (jsonData.key) {
-      case 'accountCreated':
-        accountCreated(jsonData.data);
-        break;
-      case 'loginResult':
-        loginResult(jsonData.data);
-        break;
-      default:
-        return false;
-    }
+  const regAuthHandler = (socket) => {
+    socket.handle('accountCreated', (jsonData) => accountCreated(jsonData.data));
 
-    return true;
+    socket.handle('loginResult', (jsonData) => loginResult(jsonData.data));
   };
 
   useEffect(() => {
     if (socket) {
-      socket.regAuthHandler(onAuthHandler);
+      regAuthHandler(socket);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
@@ -109,12 +100,14 @@ const SignInOnModal = ({ mode, context, closeModal }) => {
           userLogin={userLogin}
           setState={setState}
           forgotPasswordBtn={forgotPasswordBtn}
+          closeModal={closeModal}
         />
       ) : (
         <SignOnView
           createAccount={createAccount}
           setState={setState}
           forgotPasswordBtn={forgotPasswordBtn}
+          closeModal={closeModal}
         />
       )}
     </div>

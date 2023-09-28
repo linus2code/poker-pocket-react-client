@@ -40,49 +40,28 @@ const WebSocketProvider = ({ children }) => {
 
   // ----------------------------------------------------
   // From server commands a.k.a. messages
-  const onMessageHandler = (jsonData) => {
-    switch (jsonData.key) {
-      case 'connectionId': {
-        const CONNECTION_ID = Number(jsonData.connectionId);
-        setConnId(CONNECTION_ID);
-        const SOCKET_KEY = jsonData.socketKey;
-        setSocketKey(SOCKET_KEY);
-
-        console.log('onMessage isLoggedIn', isLoggedIn);
-        if (isLoggedIn) {
-          setLoggedInUserParams(isLoggedIn);
-        }
-        setSocketConnected({});
-        break;
-      }
-      case 'getGameInformation':
-        // gameInformation(jsonData.data);
-        break;
-      case 'loggedInUserParamsResult':
-        loggedInUserParamsResult(jsonData.data);
-        break;
-      case 'serverCommandResult':
-        // commandRunResult(jsonData.data);
-        break;
-      case 'loggedInUserStatisticsResults':
-        // loggedInUserStatisticsResults(jsonData.data);
-        break;
-      case 'onXPGained':
-        // onXPGained(jsonData.code, jsonData.data);
-        break;
-      case 'clientMessage':
-        // clientMessage(jsonData.data);
-        break;
-      case 'autoPlayActionResult':
-        // autoPlayActionResult(jsonData.data);
-        break;
-      case 'getPlayerChartDataResult':
-        // getPlayerChartDataResult(jsonData.data);
-        break;
-      default:
-        break;
-    }
+  const onMessageHandler = (socket) => {
+    socket.handle('connectionId', connectionIdResult);
+    socket.handle('loggedInUserParamsResult', loggedInUserParamsResult);
+    socket.handle('loggedInUserStatisticsResults', () => {});
+    socket.handle('onXPGained', () => {});
+    socket.handle('clientMessage', () => {});
+    socket.handle('autoPlayActionResult', () => {});
+    socket.handle('getPlayerChartDataResult', () => {});
   };
+
+  function connectionIdResult(jsonData) {
+    const CONNECTION_ID = Number(jsonData.connectionId);
+    setConnId(CONNECTION_ID);
+    const SOCKET_KEY = jsonData.socketKey;
+    setSocketKey(SOCKET_KEY);
+
+    console.log('onMessage isLoggedIn', isLoggedIn);
+    if (isLoggedIn) {
+      setLoggedInUserParams(isLoggedIn);
+    }
+    setSocketConnected({});
+  }
 
   // Login related functions
   function setLoggedInUserParams(isLoggedIn) {
@@ -103,7 +82,8 @@ const WebSocketProvider = ({ children }) => {
     }
   }
 
-  function loggedInUserParamsResult(lData) {
+  function loggedInUserParamsResult(jsonData) {
+    const lData = jsonData.data;
     if (!lData.result) {
       toast.error('You are logged in from another instance, which is forbidden!');
     } else {
@@ -149,7 +129,7 @@ const WebSocketProvider = ({ children }) => {
     NewWsSocket(
       config.socketURI,
       (wsSocket) => {
-        wsSocket.regMessageHandler(onMessageHandler);
+        onMessageHandler(wsSocket);
         setSocket(wsSocket);
         // window.socket = wsSocket;
       },

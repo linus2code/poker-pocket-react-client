@@ -106,26 +106,16 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
 
   useEffect(() => {
     if (socket) {
-      socket.regGameHandler(onGameHandler);
+      regGameHandler(socket);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
-  const onGameHandler = (jsonData) => {
-    switch (jsonData.key) {
-      case 'getRooms':
-        console.log('get getRooms');
-        // Example: {"key":"getRooms","data":[{"roomId":0,"roomName":"Room 0","playerCount":0,"maxSeats":6},{"roomId":1,"roomName":"Room 1","playerCount":0,"maxSeats":6},{"roomId":2,"roomName":"Room 2","playerCount":0,"maxSeats":6}]}
-        parseRooms(jsonData.data);
-        break;
-      case 'getSpectateRooms':
-        parseRooms(jsonData.data);
-        break;
-      default:
-        return false;
-    }
+  const regGameHandler = (socket) => {
+    // Example: {"key":"getRooms","data":[{"roomId":0,"roomName":"Room 0","playerCount":0,"maxSeats":6},{"roomId":1,"roomName":"Room 1","playerCount":0,"maxSeats":6},{"roomId":2,"roomName":"Room 2","playerCount":0,"maxSeats":6}]}
+    socket.handle('getRooms', (jsonData) => parseRooms(jsonData.data));
 
-    return true;
+    socket.handle('getSpectateRooms', (jsonData) => parseRooms(jsonData.data));
   };
 
   const parseRooms = (rData) => {
@@ -179,7 +169,6 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
 
   return (
     <>
-      {console.log('RE-RENDER modals')}
       <p>
         <button
           type="button"

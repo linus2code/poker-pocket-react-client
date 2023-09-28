@@ -44,7 +44,7 @@ const RoomState = ({ children }) => {
 
   useEffect(() => {
     if (socket) {
-      socket.regRoomHandler(onRoomHandler);
+      regRoomHandler(socket);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
@@ -54,53 +54,34 @@ const RoomState = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connId]);
 
-  function onRoomHandler(jsonData) {
-    // console.log('onRoomHandler jsonData', jsonData);
-    if (!jsonData) return;
+  function regRoomHandler(socket) {
+    // Example: {"playerCount":3,"roomMinBet":10,"middleCards":["Q♠","6♦","9♠","4♠"],"playersData":[{"playerId":0,"playerName":"Bot362","playerMoney":6462.5,"isDealer":false},{"playerId":1,"playerName":"Bot265","playerMoney":9902.5,"isDealer":false},{"playerId":2,"playerName":"Bot966","playerMoney":13500,"isDealer":true}]}
+    socket.handle('roomParams', (jsonData) => roomParameters(jsonData.data));
 
-    switch (jsonData.key) {
-      case 'roomParams':
-        // Example: {"playerCount":3,"roomMinBet":10,"middleCards":["Q♠","6♦","9♠","4♠"],"playersData":[{"playerId":0,"playerName":"Bot362","playerMoney":6462.5,"isDealer":false},{"playerId":1,"playerName":"Bot265","playerMoney":9902.5,"isDealer":false},{"playerId":2,"playerName":"Bot966","playerMoney":13500,"isDealer":true}]}
-        roomParameters(jsonData.data);
-        break;
-      case 'holeCards':
-        // Hole Cards  ({"players":[{"playerId":0,"cards":["3♠","4♥"]}]})
-        holeCards(jsonData.data);
-        break;
-      case 'statusUpdate':
-        // Status update ({"totalPot":30,"currentStatus":"Betting round 4","middleCards":["2♦","4♥","5♦","A♠","3♠"],"playersData":[{"playerId":1,"playerName":"Anon250","playerMoney":10000,"totalBet":0,"isPlayerTurn":false,"isFold":true,"timeBar":0},{"playerId":2,"playerName":"Anon93","playerMoney":9970,"totalBet":30,"isPlayerTurn":true,"isFold":false,"timeBar":0}],"isCallSituation":false,"isResultsCall":false})
-        statusUpdate(jsonData.data);
-        break;
-      case 'lastUserAction':
-        // Example: {"playerId":0,"actionText":"raise"}
-        playerLastActionHandler(jsonData.data);
-        break;
-      case 'theFlop':
-        // The Flop (theFlop: {"middleCards":["8♣","5♣","2♥"]})
-        theFlop(jsonData.data);
-        break;
-      case 'theTurn':
-        // The turn (theTurn: {"middleCards":["Q♦","J♥","3♥","6♠"]})
-        theTurn(jsonData.data);
-        break;
-      case 'theRiver':
-        // The river (theRiver: {"middleCards":["8♥","8♦","J♣","J♠","7♣"]})
-        theRiver(jsonData.data);
-        break;
-      case 'collectChipsToPot':
-        collectChipsToPotAction();
-        break;
-      case 'allPlayersCards':
-        // Example: {"players":[{"playerId":0,"cards":["6♦","A♦"]},{"playerId":1,"cards":["7♣","7♠"]}]}
-        allPlayersCards(jsonData.data);
-        break;
-      case 'audioCommand':
-        audioCommand(jsonData.data);
-        break;
-      default:
-        return false;
-    }
-    return true;
+    // Hole Cards  ({"players":[{"playerId":0,"cards":["3♠","4♥"]}]})
+    socket.handle('holeCards', (jsonData) => holeCards(jsonData.data));
+
+    // Status update ({"totalPot":30,"currentStatus":"Betting round 4","middleCards":["2♦","4♥","5♦","A♠","3♠"],"playersData":[{"playerId":1,"playerName":"Anon250","playerMoney":10000,"totalBet":0,"isPlayerTurn":false,"isFold":true,"timeBar":0},{"playerId":2,"playerName":"Anon93","playerMoney":9970,"totalBet":30,"isPlayerTurn":true,"isFold":false,"timeBar":0}],"isCallSituation":false,"isResultsCall":false})
+    socket.handle('statusUpdate', (jsonData) => statusUpdate(jsonData.data));
+
+    // Example: {"playerId":0,"actionText":"raise"}
+    socket.handle('lastUserAction', (jsonData) => playerLastActionHandler(jsonData.data));
+
+    // The Flop (theFlop: {"middleCards":["8♣","5♣","2♥"]})
+    socket.handle('theFlop', (jsonData) => theFlop(jsonData.data));
+
+    // The turn (theTurn: {"middleCards":["Q♦","J♥","3♥","6♠"]})
+    socket.handle('theTurn', (jsonData) => theTurn(jsonData.data));
+
+    // The river (theRiver: {"middleCards":["8♥","8♦","J♣","J♠","7♣"]})
+    socket.handle('theRiver', (jsonData) => theRiver(jsonData.data));
+
+    socket.handle('collectChipsToPot', (jsonData) => collectChipsToPotAction());
+
+    // Example: {"players":[{"playerId":0,"cards":["6♦","A♦"]},{"playerId":1,"cards":["7♣","7♠"]}]}
+    socket.handle('allPlayersCards', (jsonData) => allPlayersCards(jsonData.data));
+
+    socket.handle('audioCommand', (jsonData) => audioCommand(jsonData.data));
   }
 
   // init room data

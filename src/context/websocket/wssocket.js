@@ -6,11 +6,6 @@ export const NewWsSocket = (url, onConnect, onClose) => {
 
   const handler = {};
 
-  let onMessageHandler = null;
-  let onRoomHandler = null;
-  let onGameHandler = null;
-  let onAuthHandler = null;
-
   const registerCallbacks = (webSocket) => {
     // WebSocket events
     webSocket.onopen = (event) => {
@@ -18,7 +13,7 @@ export const NewWsSocket = (url, onConnect, onClose) => {
     };
     webSocket.onmessage = (event) => {
       const jsonData = JSON.parse(event.data);
-      console.log('jsonData ', jsonData.key);
+      // console.log('jsonData ', jsonData.key);
 
       // console.log(JSON.stringify(jsonData));
       // console.log('jsonData ', jsonData.key);
@@ -27,19 +22,7 @@ export const NewWsSocket = (url, onConnect, onClose) => {
         return;
       }
 
-      if (onRoomHandler && onRoomHandler(jsonData)) {
-        return;
-      }
-
-      if (onGameHandler && onGameHandler(jsonData)) {
-        return;
-      }
-
-      if (onAuthHandler && onAuthHandler(jsonData)) {
-        return;
-      }
-
-      if (onMessageHandler) onMessageHandler(jsonData);
+      console.log('jsonData not handle', jsonData.key);
     };
     webSocket.onclose = () => {
       if (onClose) onClose(data);
@@ -52,22 +35,6 @@ export const NewWsSocket = (url, onConnect, onClose) => {
     handler[key] = callback;
   };
 
-  const regMessageHandler = (callback) => {
-    onMessageHandler = callback;
-  };
-
-  const regRoomHandler = (callback) => {
-    onRoomHandler = callback;
-  };
-
-  const regGameHandler = (callback) => {
-    onGameHandler = callback;
-  };
-
-  const regAuthHandler = (callback) => {
-    onAuthHandler = callback;
-  };
-
   const send = (data) => {
     webSocket.send(data);
   };
@@ -77,15 +44,7 @@ export const NewWsSocket = (url, onConnect, onClose) => {
   };
   data.send = send;
   data.close = close;
-
   data.handle = regHandler;
-  data.regMessageHandler = regMessageHandler;
-  data.regGameHandler = regGameHandler;
-  data.regRoomHandler = regRoomHandler;
-  data.regAuthHandler = regAuthHandler;
-
-  // debug
-  data.onRoomHandler = onRoomHandler;
 
   return data;
 };
