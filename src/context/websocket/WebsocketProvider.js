@@ -43,7 +43,10 @@ const WebSocketProvider = ({ children }) => {
   const onMessageHandler = (socket) => {
     socket.handle('connectionId', connectionIdResult);
     socket.handle('loggedInUserParamsResult', loggedInUserParamsResult);
-    socket.handle('loggedInUserStatisticsResults', () => {});
+    // Example: {"name":"Admin","money":79050,"winCount":1,"loseCount":6,"achievements":[{"name":"Starter","description":"Starter's achievement from good start.","icon_name":"achievement_starter"},{"name":"Test achievement","description":"Second achievement","icon_name":"achievement_starter"}]}
+    socket.handle('loggedInUserStatisticsResults', (jsonData) =>
+      loggedInUserStatisticsResults(jsonData.data)
+    );
     socket.handle('onXPGained', () => {});
     socket.handle('clientMessage', () => {});
     socket.handle('autoPlayActionResult', () => {});
@@ -87,8 +90,32 @@ const WebSocketProvider = ({ children }) => {
     if (!lData.result) {
       toast.error('You are logged in from another instance, which is forbidden!');
     } else {
-      // getLoggedInUserStatistics();
+      getLoggedInUserStatistics();
     }
+  }
+
+  function getLoggedInUserStatistics() {
+    if (socket && isLoggedIn) {
+      const data = JSON.stringify({
+        connectionId: connIdRef.current,
+        socketKey: socketKeyRef.current,
+        key: 'loggedInUserStatistics',
+      });
+      socket.send(data);
+    }
+  }
+
+  const [myDashboardRefresh, setMyDashboardDataRefresh] = useState(null);
+  const [myDashboardData, setMyDashboardData] = useState(null);
+
+  useEffect(() => {
+    getLoggedInUserStatistics();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myDashboardRefresh]);
+
+  function loggedInUserStatisticsResults(uData) {
+    // console.log(JSON.stringify(uData));
+    setMyDashboardData(uData);
   }
 
   useEffect(() => {
@@ -156,6 +183,9 @@ const WebSocketProvider = ({ children }) => {
         socketKey: socketKeyRef.current,
         reconnect,
         cleanUp,
+        myDashboardData,
+        myDashboardRefresh,
+        setMyDashboardDataRefresh,
       }}
     >
       {children}

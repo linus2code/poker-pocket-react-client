@@ -8,7 +8,7 @@ import SelectRoomModal from '@/modals/SelectRoomModal';
 import RankingsModal from '@/modals/RankingsModal';
 import GameInfoModal from '@/modals/GameInfoModal';
 import CommandModal from '@/modals/CommandModal';
-import UserModal from '@/modals/UserModal';
+import UserDashboardModal from '@/modals/UserDashboardModal';
 import SignInOnModal from '@/modals/SignInOnModal';
 import socketContext from '@/context/websocket/socketContext';
 import gameContext from '@/context/game/gameContext';
@@ -24,8 +24,6 @@ const Navbar = () => {
 
   const socketCtx = useContext(socketContext);
   const gameCtx = useContext(gameContext);
-
-  function getLoggedInUserStatistics() {}
 
   const [enableSounds, setEnableSounds] = useState(true);
 
@@ -73,7 +71,8 @@ const Navbar = () => {
   const openCmdModal = () =>
     openView(() => <CommandModal context={{ socketCtx }} closeModal={closeModal} />);
 
-  const openUserModal = () => openModal(() => <UserModal />, t('MY_STATISTICS'), t('CLOSE'));
+  const openUserModal = () =>
+    openView(() => <UserDashboardModal context={{ socketCtx }} closeModal={closeModal} />);
 
   const openSignInModaVuew = () => {
     openView(() => (
@@ -120,7 +119,7 @@ const Navbar = () => {
             <ul
               id="loggedInUserIcon"
               className="nav navbar-nav navbar-right"
-              onClick={() => openUserModal() && getLoggedInUserStatistics()}
+              onClick={() => openUserModal()}
             >
               <li style={{ marginRight: '5px' }}>
                 <div

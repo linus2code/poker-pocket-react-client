@@ -23,7 +23,7 @@ import {
 let players = [];
 
 const RoomState = ({ children }) => {
-  const { connId, socket } = useContext(socketContext);
+  const { connId, socket, setMyDashboardDataRefresh } = useContext(socketContext);
 
   const {
     setHeroTurn,
@@ -90,7 +90,7 @@ const RoomState = ({ children }) => {
 
     initRoom(room.current);
     initSeats(seats.data);
-    // getLoggedInUserStatistics(); // Added so refreshing xp needed counter updates automatically
+    setMyDashboardDataRefresh({}); // Added so refreshing xp needed counter updates automatically
     roomStatusParser(rData);
     boardParser(rData);
     setRoomInfo({ data: room.current.roomInfo });
