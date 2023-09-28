@@ -29,10 +29,12 @@ const WebSocketProvider = ({ children }) => {
   // From server commands a.k.a. messages
   const onMessageHandler = (socket) => {
     socket.handle('connectionId', connectionIdResult);
-    socket.handle('onXPGained', () => {});
-    socket.handle('clientMessage', () => {});
-    socket.handle('autoPlayActionResult', () => {});
-    socket.handle('getPlayerChartDataResult', () => {});
+    socket.handle('onXPGained', (jsonData) => {
+      onXPGained(jsonData.code, jsonData.data);
+    });
+    socket.handle('clientMessage', (jsonData) => {
+      clientMessage(jsonData.data);
+    });
   };
 
   function connectionIdResult(jsonData) {
@@ -42,6 +44,18 @@ const WebSocketProvider = ({ children }) => {
     setSocketKey(SOCKET_KEY);
 
     setSocketConnected({});
+  }
+
+  // Notify front end of gaining more xp
+  function onXPGained(responseCode, xData) {
+    if (Number(responseCode) === 200) {
+      toast.info('+' + xData.xpGainedAmount + 'XP gained due ' + xData.xpMessage);
+    }
+  }
+
+  // Show incoming message straight on UI
+  function clientMessage(cData) {
+    toast.info(cData.message);
   }
 
   useEffect(() => {

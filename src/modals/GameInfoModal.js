@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import contentContext from '@/context/content/contentContext';
 
-const GameInfomModal = ({ context }) => {
+const GameInfoModal = ({ context }) => {
   const { t } = useContext(contentContext);
 
   const { socketCtx } = context;
@@ -35,8 +35,6 @@ const GameInfomModal = ({ context }) => {
   // Parse game information
   // {"roomCount":3,"totalConnectionsCount":3,"activeConnectionsCount":3,"serverFreeMemory":42.07421875,"serverTotalMemory":925.51953125,"serverUpTime":419942,"serverLoadAverage":0}
   function gameInformation(jsonData) {
-    console.log('fafa', JSON.stringify(jsonData));
-
     const gData = jsonData.data;
 
     const data = {
@@ -111,4 +109,4 @@ const GameInfomModal = ({ context }) => {
   ) : null;
 };
 
-export default GameInfomModal;
+export default GameInfoModal;
