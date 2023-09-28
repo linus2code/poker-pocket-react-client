@@ -22,16 +22,18 @@ import {
 } from '@/components/audio';
 import { setupSeats } from '@/components/game/domains/Seat';
 
+// let autoPlay = false; // Set true makes logged in player play automatically
 let tempPlayers = [];
 
 const RoomState = ({ children }) => {
-  const { connId, socket, socketDisconnected } = useContext(socketContext);
+  const { socket, connId, socketDisconnected } = useContext(socketContext);
   const { setMyDashboardDataRefresh } = useContext(authContext);
 
   const [enableSounds, setEnableSounds] = useState(true);
-  const [autoPlay, setAutoPlay] = useState(false);
+  const [autoCheck, setAutoCheck] = useState(false);
+
   // Set true makes logged in player play automatically
-  const [autoPlayCommandRequested, setAutoPlayCommandRequested] = useState(false);
+  const [autoPlay, setAutoPlay] = useState(false);
 
   const [roomId, setRoomId] = useState(-1); // ROOM_ID = -1;
   const [players, setPlayers] = useState(null);
@@ -280,9 +282,6 @@ const RoomState = ({ children }) => {
         roomRef.current.ctrl.actionBtnVisibility(pTurn, false);
 
         setActionButtonsEnabled(true);
-        if (pTurn && autoPlay && !autoPlayCommandRequested) {
-          // getAutoPlayAction();
-        }
         if (pTurn) {
           setHeroTurn({ data: player });
         }
@@ -490,8 +489,8 @@ const RoomState = ({ children }) => {
         setActionButtonsEnabled,
         autoPlay,
         setAutoPlay,
-        autoPlayCommandRequested,
-        setAutoPlayCommandRequested,
+        autoCheck,
+        setAutoCheck,
         board,
         setBoard,
         roomInfo,

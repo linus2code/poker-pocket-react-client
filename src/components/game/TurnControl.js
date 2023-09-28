@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useEffect, useContext, useMemo, useRef } from 'react';
 import { toast } from 'react-toastify';
 import socketContext from '@/context/websocket/socketContext';
 import roomContext from '@/context/room/roomContext';
@@ -26,9 +26,75 @@ const StyledActBtn = ({ className, onClick, label }) => {
 
 const TurnControl = () => {
   const { socket, connId, socketKey } = useContext(socketContext);
-  const { roomId, ctrl, players, heroTurn } = useContext(roomContext);
+  const { roomId, ctrl, players, heroTurn, autoCheck, autoPlay } = useContext(roomContext);
 
-  let isloading = false;
+  useEffect(() => {
+    if (socket) {
+      socket.handle('autoPlayActionResult', (jsonData) => autoPlayActionResult(jsonData.data));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
+  useEffect(() => {
+    const hero = heroTurn.data;
+    if (autoCheck && hero && hero.isPlayerTurn) {
+      checkBtnClick(hero);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoCheck, heroTurn]);
+
+  const autoPlayCommandRequested = useRef(null);
+
+  useEffect(() => {
+    const hero = heroTurn.data;
+    if (autoPlay && hero && hero.isPlayerTurn && !autoPlayCommandRequested.current) {
+      getAutoPlayAction();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPlay, heroTurn]);
+
+  // If auto play enabled, request action via this function
+  function getAutoPlayAction() {
+    if (socket) {
+      autoPlayCommandRequested.current = true;
+      console.log('# Requesting auto play action');
+      const data = JSON.stringify({
+        connectionId: connId,
+        socketKey: socketKey,
+        key: 'autoPlayAction',
+      });
+      socket.send(data);
+    }
+  }
+
+  // AutoPlay action result parser
+  function autoPlayActionResult(aData) {
+    // console.log(JSON.stringify(aData));
+    // example {"action":"bot_call","amount":0}
+    console.log('AutoPlay action: ' + aData.action);
+
+    switch (aData.action) {
+      case 'bot_fold':
+        setFold();
+        break;
+      case 'bot_check':
+        setCheck();
+        break;
+      case 'bot_call':
+        setCheck();
+        break;
+      case 'bot_raise':
+        setRaise(aData.amount);
+        break;
+      case 'remove_bot': // Bot run out of money
+        toast.error('Run out of money basically'); // location.reload();
+        break;
+      default:
+        setCheck();
+        break;
+    }
+    autoPlayCommandRequested.current = false; // reset always
+  }
 
   function setFold() {
     if (socket) {
@@ -44,28 +110,26 @@ const TurnControl = () => {
 
   function setCheck() {
     if (socket) {
-      socket.send(
-        JSON.stringify({
-          connectionId: connId,
-          socketKey: socketKey,
-          key: 'setCheck',
-          roomId: roomId,
-        })
-      );
+      const data = JSON.stringify({
+        connectionId: connId,
+        socketKey: socketKey,
+        key: 'setCheck',
+        roomId: roomId,
+      });
+      socket.send(data);
     }
   }
 
   function setRaise(amount) {
     if (socket && amount > 0) {
-      socket.send(
-        JSON.stringify({
-          connectionId: connId,
-          socketKey: socketKey,
-          key: 'setRaise',
-          roomId: roomId,
-          amount: amount,
-        })
-      );
+      const data = JSON.stringify({
+        connectionId: connId,
+        socketKey: socketKey,
+        key: 'setRaise',
+        roomId: roomId,
+        amount: amount,
+      });
+      socket.send(data);
     }
   }
 
@@ -128,36 +192,30 @@ const TurnControl = () => {
     return 0;
   }
 
-  function foldBtnClick() {
-    if (!isloading) {
+  function foldBtnClick(hero) {
+    if (hero && hero.isPlayerTurn) {
       setFold();
-      isloading = true;
     }
   }
 
-  function checkBtnClick() {
-    if (!isloading) {
-      const hero = heroTurn.data;
-      if (hero) {
-        if (hero.tempBet > 0) {
-          toast.info('You have already thrown chips in... raising...');
+  function checkBtnClick(hero) {
+    if (hero && hero.isPlayerTurn) {
+      if (hero.tempBet > 0) {
+        toast.info('You have already thrown chips in... raising...');
 
-          const rTempBet = hero.tempBet;
-          hero.tempBet = 0;
-          setRaise(rTempBet);
-        } else {
-          setCheck();
-        }
-        isloading = true;
+        const rTempBet = hero.tempBet;
+        hero.tempBet = 0;
+        setRaise(rTempBet);
+      } else {
+        setCheck();
       }
     }
   }
 
-  function raiseBtnClick() {
-    if (!isloading) {
+  function raiseBtnClick(hero) {
+    if (hero && hero.isPlayerTurn) {
       const chips = myRaiseHelper();
       setRaise(chips);
-      isloading = true;
     }
   }
 
@@ -181,21 +239,21 @@ const TurnControl = () => {
               <StyledBetBtn onClick={betFiveHundredClick} label="+500" />
               <StyledBetBtn onClick={betAllInClick} label="All In" />
             </div>
-            {hero && hero.isPlayerTurn ? (
+            {!autoCheck && !autoPlay && hero && hero.isPlayerTurn ? (
               <div className="col">
                 <StyledActBtn
-                  onClick={foldBtnClick}
+                  onClick={() => foldBtnClick(hero)}
                   className={`${current.isFoldBtn ? 'ctrl-btn-visiable' : 'ctrl-btn-hide'}`}
                   label="Fold"
                 />
                 {/* When calling situation occurs, swap check btn text to call (handled by statusUpdate call from server) */}
                 <StyledActBtn
-                  onClick={checkBtnClick}
+                  onClick={() => checkBtnClick(hero)}
                   className={`${current.isCheckBtn ? 'ctrl-btn-visiable' : 'ctrl-btn-hide'}`}
                   label={current.isCallSituation ? 'Call' : 'Check'}
                 />
                 <StyledActBtn
-                  onClick={raiseBtnClick}
+                  onClick={() => raiseBtnClick(hero)}
                   className={`${current.isRaiseBtn ? 'ctrl-btn-visiable' : 'ctrl-btn-hide'}`}
                   label="Raise"
                 />
@@ -208,7 +266,7 @@ const TurnControl = () => {
       </div>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ctrl, heroTurn]);
+  }, [ctrl, heroTurn, autoCheck, autoPlay]);
 
   return view;
 };

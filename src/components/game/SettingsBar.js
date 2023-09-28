@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import globalContext from '@/context/global/globalContext';
 import contentContext from '@/context/content/contentContext';
+import roomContext from '@/context/room/roomContext';
 import SwitchButton from '@/components/buttons/SwitchButton';
 import { parserCardStyle } from '@/utils/CardRes';
 
@@ -40,6 +41,8 @@ const SettingsBar = () => {
   const { setCardStyle } = useContext(globalContext);
   const { t } = useContext(contentContext);
 
+  const { setAutoCheck, setAutoPlay } = useContext(roomContext);
+
   const [tablePurpleBg, setTablePurpleBg] = useState(purpleBgVal());
   const [blackCards] = useState(blackCardVal());
 
@@ -74,27 +77,13 @@ const SettingsBar = () => {
     reloadDelay();
   };
 
-  const [autoCheckInterval, setAutoCheckInterval] = useState(false);
-
   const changeAutoCheck = (state) => {
-    state ? clearInterval(autoCheckInterval) : enableAutoCheck();
+    setAutoCheck(state);
   };
 
-  function enableAutoCheck() {
-    const interval_id = setInterval(function () {
-      // if (webSocket.readyState == webSocket.OPEN) {
-      //   for (let i = 0; i < players.length; i++) {
-      //     if (players[i].playerId == CONNECTION_ID) {
-      //       if (players[i].isPlayerTurn && !players[i].isCallSituation) {
-      //         checkBtnClick();
-      //       }
-      //     }
-      //   }
-      // }
-    }, 3000);
-
-    setAutoCheckInterval(interval_id);
-  }
+  const changeAutoPlay = (state) => {
+    setAutoPlay(state);
+  };
 
   async function reloadDelay() {
     await sleep(500);
@@ -113,7 +102,6 @@ const SettingsBar = () => {
       <StyledItem className="col">
         <SwitchButton
           label={t('PURPLE_TABLE')}
-          id="purple-table-mode-toggle"
           onText="On"
           offText="Off"
           value={tablePurpleBg}
@@ -123,7 +111,6 @@ const SettingsBar = () => {
       <StyledItem className="col">
         <SwitchButton
           label={t('BLACK_CARDS')}
-          id="black-cards-mode-toggle"
           onText="On"
           offText="Off"
           value={blackCards}
@@ -133,7 +120,6 @@ const SettingsBar = () => {
       <StyledItem className="col">
         <SwitchButton
           label={t('AUTO_CHECK')}
-          id="auto-check-mode-toggle"
           onText="On"
           offText="Off"
           onChange={(checked) => changeAutoCheck(checked)}
@@ -141,14 +127,21 @@ const SettingsBar = () => {
       </StyledItem>
       <StyledItem className="col">
         <SwitchButton
+          label={t('AUTO_PLAY')}
+          onText="On"
+          offText="Off"
+          onChange={(checked) => changeAutoPlay(checked)}
+        />
+      </StyledItem>
+      <StyledItem className="col">
+        <SwitchButton
           label={t('CONNECTION')}
-          id="connection-mode-toggle"
           onText="Prod"
           offText="Dev"
           onChange={(checked) => changeConnectMode(checked)}
         />
       </StyledItem>
-      <div className="col-3" style={{ marginTop: '20px' }}>
+      <div className="col-2" style={{ marginTop: '20px' }}>
         <div className="row">
           <a href="https://play.google.com/store/apps/details?id=com.nitramite.pokerpocket">
             <img
