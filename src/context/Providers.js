@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ModalProvider from './modal/ModalProvider';
 import OfflineProvider from './offline/OfflineProvider';
 import WebSocketProvider from './websocket/WebsocketProvider';
+import AuthState from './auth/AuthState';
 import GameState from './game/GameState';
 import RoomState from './room/RoomState';
 
@@ -21,11 +22,13 @@ const Providers = ({ children }) => (
           <ModalProvider>
             <OfflineProvider>
               <WebSocketProvider>
-                <GameState>
-                  <RoomState>
-                    {children}
-                  </RoomState>
-                </GameState>
+                <AuthState>
+                  <GameState>
+                    <RoomState>
+                      {children}
+                    </RoomState>
+                  </GameState>
+                </AuthState>
               </WebSocketProvider>
             </OfflineProvider>
           </ModalProvider>

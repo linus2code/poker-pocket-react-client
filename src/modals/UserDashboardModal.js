@@ -5,8 +5,9 @@ import contentContext from '@/context/content/contentContext';
 const UserDashboardModal = ({ context, closeModal }) => {
   const { t } = useContext(contentContext);
 
-  const { socketCtx } = context;
-  const { socket, connId, socketKey, myDashboardData, setMyDashboardDataRefresh } = socketCtx;
+  const { socketCtx, authCtx } = context;
+  const { socket, connId, socketKey } = socketCtx;
+  const { myDashboardData, setMyDashboardDataRefresh } = authCtx;
 
   useEffect(() => {
     if (socket) {

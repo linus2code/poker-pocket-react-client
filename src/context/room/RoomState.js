@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useRef } from 'react';
 import RoomContext from './roomContext';
 import gameContext from '@/context/game/gameContext';
 import socketContext from '@/context/websocket/socketContext';
+import authContext from '@/context/auth/authContext';
 import NewRoom, {
   NewRoomInfo,
   NewBoard,
@@ -23,7 +24,8 @@ import {
 let players = [];
 
 const RoomState = ({ children }) => {
-  const { connId, socket, setMyDashboardDataRefresh } = useContext(socketContext);
+  const { connId, socket } = useContext(socketContext);
+  const { setMyDashboardDataRefresh } = useContext(authContext);
 
   const {
     setHeroTurn,

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
 import NavButton from '@/components/buttons/NavButton';
-import globalContext from '@/context/global/globalContext';
 import contentContext from '@/context/content/contentContext';
 import modalContext from '@/context/modal/modalContext';
 import SelectRoomModal from '@/modals/SelectRoomModal';
@@ -11,18 +10,20 @@ import CommandModal from '@/modals/CommandModal';
 import UserDashboardModal from '@/modals/UserDashboardModal';
 import SignInOnModal from '@/modals/SignInOnModal';
 import socketContext from '@/context/websocket/socketContext';
+import authContext from '@/context/auth/authContext';
 import gameContext from '@/context/game/gameContext';
 
 const LS_ENABLE_SOUNDS_STATE = 'LS_ENABLE_SOUNDS_STATE';
 
 const Navbar = () => {
   const { t } = useContext(contentContext);
-  const { isLoggedIn } = useContext(globalContext);
   const { openView, openModal, closeModal } = useContext(modalContext);
 
   const { socket, socketConnected } = useContext(socketContext);
+  const { isLoggedIn } = useContext(authContext);
 
   const socketCtx = useContext(socketContext);
+  const authCtx = useContext(authContext);
   const gameCtx = useContext(gameContext);
 
   const [enableSounds, setEnableSounds] = useState(true);
@@ -72,7 +73,7 @@ const Navbar = () => {
     openView(() => <CommandModal context={{ socketCtx }} closeModal={closeModal} />);
 
   const openUserModal = () =>
-    openView(() => <UserDashboardModal context={{ socketCtx }} closeModal={closeModal} />);
+    openView(() => <UserDashboardModal context={{ socketCtx, authCtx }} closeModal={closeModal} />);
 
   const openSignInModaVuew = () => {
     openView(() => (
