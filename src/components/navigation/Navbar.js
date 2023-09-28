@@ -76,7 +76,9 @@ const Navbar = () => {
     openView(() => <UserDashboardModal context={{ socketCtx, authCtx }} closeModal={closeModal} />);
 
   const openSignInModaVuew = () => {
-    openView(() => <SignInOnModal mode={0} context={{ socketCtx }} closeModal={closeModal} />);
+    openView(() => (
+      <SignInOnModal mode={0} context={{ socketCtx, authCtx }} closeModal={closeModal} />
+    ));
   };
 
   return (

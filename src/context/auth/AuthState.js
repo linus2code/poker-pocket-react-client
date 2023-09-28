@@ -38,8 +38,8 @@ const AuthState = ({ children }) => {
     if (socket) {
       socket.send(
         JSON.stringify({
-          connectionId: connId.current,
-          socketKey: socketKey.current,
+          connectionId: connId,
+          socketKey: socketKey,
           key: 'loggedInUserParams',
           name: username,
           password: passwordHash,
@@ -61,8 +61,8 @@ const AuthState = ({ children }) => {
   function getLoggedInUserStatistics() {
     if (socket && isLoggedIn) {
       const data = JSON.stringify({
-        connectionId: connId.current,
-        socketKey: socketKey.current,
+        connectionId: connId,
+        socketKey: socketKey,
         key: 'loggedInUserStatistics',
       });
       socket.send(data);

@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { sha3_512 } from 'js-sha3';
-import authContext from '@/context/auth/authContext';
 import SignInView from './SignInModal';
 import SignOnView from './SignOnModal';
 
 const SignInOnModal = ({ mode, context, closeModal }) => {
-  const { setIsLoggedIn } = useContext(authContext);
-
   const [state, setState] = useState(mode);
 
-  const { socketCtx } = context;
+  const { socketCtx, authCtx } = context;
   const { socket, connId, socketKey, reconnect } = socketCtx;
+  const { setIsLoggedIn } = authCtx;
 
   const regAuthHandler = (socket) => {
     socket.handle('accountCreated', (jsonData) => accountCreated(jsonData.data));
