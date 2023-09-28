@@ -8,9 +8,6 @@ const cards_style = localStorage.getItem(LS_USE_BLACK_CARDS);
 
 const GlobalState = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [id, setId] = useState(null);
-  const [roomData, setRoomData] = useState(null);
-
   const [cardStyle, setCardStyle] = useState(parserCardStyle(cards_style));
 
   return (
@@ -18,10 +15,6 @@ const GlobalState = ({ children }) => {
       value={{
         isLoading,
         setIsLoading,
-        id,
-        setId,
-        roomData,
-        setRoomData,
         cardStyle,
         setCardStyle,
       }}

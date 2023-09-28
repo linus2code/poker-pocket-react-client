@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
 import { sha3_512 } from 'js-sha3';
-import globalContext from '@/context/global/globalContext';
+import authContext from '@/context/auth/authContext';
 import SignInView from './SignInModal';
 import SignOnView from './SignOnModal';
 
 const SignInOnModal = ({ mode, context, closeModal }) => {
-  const { setIsLoggedIn } = useContext(globalContext);
+  const { setIsLoggedIn } = useContext(authContext);
 
   const [state, setState] = useState(mode);
 

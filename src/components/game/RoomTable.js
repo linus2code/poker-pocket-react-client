@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import SeatSlot from './SeatSlot';
-import gameContext from '@/context/game/gameContext';
+import roomContext from '@/context/room/roomContext';
 
 const RoomTable = ({ children }) => {
-  const { seats } = useContext(gameContext);
+  const { seats } = useContext(roomContext);
 
   const current = seats.data;
   return (

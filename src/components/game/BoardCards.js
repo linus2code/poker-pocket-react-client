@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import globalContext from '@/context/global/globalContext';
-import gameContext from '@/context/game/gameContext';
+import roomContext from '@/context/room/roomContext';
 import { getCardResource } from '@/utils/CardRes';
 import { formatMoney } from '@/utils/Money';
 
@@ -11,7 +11,7 @@ import { formatMoney } from '@/utils/Money';
 
 const BoardCards = () => {
   const { cardStyle } = useContext(globalContext);
-  const { board } = useContext(gameContext);
+  const { board } = useContext(roomContext);
 
   const view = useMemo(() => {
     const current = board.data;

@@ -11,7 +11,7 @@ import UserDashboardModal from '@/modals/UserDashboardModal';
 import SignInOnModal from '@/modals/SignInOnModal';
 import socketContext from '@/context/websocket/socketContext';
 import authContext from '@/context/auth/authContext';
-import gameContext from '@/context/game/gameContext';
+import roomContext from '@/context/room/roomContext';
 
 const LS_ENABLE_SOUNDS_STATE = 'LS_ENABLE_SOUNDS_STATE';
 
@@ -24,7 +24,7 @@ const Navbar = () => {
 
   const socketCtx = useContext(socketContext);
   const authCtx = useContext(authContext);
-  const gameCtx = useContext(gameContext);
+  const roomCtx = useContext(roomContext);
 
   const [enableSounds, setEnableSounds] = useState(true);
 
@@ -55,7 +55,7 @@ const Navbar = () => {
     if (socket) {
       openModal(
         () => (
-          <SelectRoomModal mode={mode} context={{ socketCtx, gameCtx }} closeModal={closeModal} />
+          <SelectRoomModal mode={mode} context={{ socketCtx, roomCtx }} closeModal={closeModal} />
         ),
         t('SELECT_ROOM'),
         t('CLOSE')
@@ -76,9 +76,7 @@ const Navbar = () => {
     openView(() => <UserDashboardModal context={{ socketCtx, authCtx }} closeModal={closeModal} />);
 
   const openSignInModaVuew = () => {
-    openView(() => (
-      <SignInOnModal mode={0} context={{ socketCtx, gameCtx }} closeModal={closeModal} />
-    ));
+    openView(() => <SignInOnModal mode={0} context={{ socketCtx }} closeModal={closeModal} />);
   };
 
   return (

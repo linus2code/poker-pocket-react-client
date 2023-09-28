@@ -4,8 +4,8 @@ import { toast } from 'react-toastify';
 const playerNickname = 'Anon' + Math.floor(Math.random() * 1000);
 
 const SelectRoomModal = ({ mode, context, closeModal }) => {
-  const { socketCtx, gameCtx } = context;
-  const { roomId, setRoomId } = gameCtx;
+  const { socketCtx, roomCtx } = context;
+  const { roomId, setRoomId } = roomCtx;
   const { socket, connId, socketKey } = socketCtx;
 
   const [isSpect, setIsSpect] = useState(mode !== 'all');

@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 import { toast } from 'react-toastify';
-import gameContext from '@/context/game/gameContext';
 import socketContext from '@/context/websocket/socketContext';
+import roomContext from '@/context/room/roomContext';
 
 const StyledBetBtn = ({ onClick, label }) => {
   return (
@@ -25,8 +25,8 @@ const StyledActBtn = ({ className, onClick, label }) => {
 };
 
 const TurnControl = () => {
-  const { roomId, ctrl, players, heroTurn } = useContext(gameContext);
   const { socket, connId, socketKey } = useContext(socketContext);
+  const { roomId, ctrl, players, heroTurn } = useContext(roomContext);
 
   let isloading = false;
 

@@ -1,6 +1,5 @@
-import React, { useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import RoomContext from './roomContext';
-import gameContext from '@/context/game/gameContext';
 import socketContext from '@/context/websocket/socketContext';
 import authContext from '@/context/auth/authContext';
 import NewRoom, {
@@ -20,26 +19,36 @@ import {
   playCardPlaceChipsOne,
   playCardSlideSix,
 } from '@/components/audio';
+import { setupSeats } from '@/components/game/domains/Seat';
 
-let players = [];
+let tempPlayers = [];
 
 const RoomState = ({ children }) => {
-  const { connId, socket } = useContext(socketContext);
+  const { connId, socket, socketDisconnected } = useContext(socketContext);
   const { setMyDashboardDataRefresh } = useContext(authContext);
 
-  const {
-    setHeroTurn,
-    setPlayers,
-    enableSounds,
-    autoPlay,
-    setActionButtonsEnabled,
-    autoPlayCommandRequested,
-    setRoomInfo,
-    setBoard,
-    setCtrl,
-    seats,
-    setSeats,
-  } = useContext(gameContext);
+  const [roomId, setRoomId] = useState(-1); // ROOM_ID = -1;
+  const [players, setPlayers] = useState(null);
+
+  const [enableSounds, setEnableSounds] = useState(true);
+
+  const [actionButtonsEnabled, setActionButtonsEnabled] = useState(false);
+  // Set true makes logged in player play automatically
+  const [autoPlay, setAutoPlay] = useState(false);
+  const [autoPlayCommandRequested, setAutoPlayCommandRequested] = useState(false);
+
+  const [roomInfo, setRoomInfo] = useState({ data: NewRoomInfo() });
+  const [board, setBoard] = useState({ data: NewBoard(enableSounds) });
+  const [ctrl, setCtrl] = useState({ data: NewCtrl(enableSounds) });
+
+  const seatsRef = useRef(setupSeats());
+  const [seats, setSeats] = useState({ data: seatsRef.current });
+  const [heroTurn, setHeroTurn] = useState({ data: null });
+
+  useEffect(() => {
+    setPlayers(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socketDisconnected]);
 
   const connIdRef = useRef(-1);
   const room = useRef(NewRoom(NewRoomInfo(), NewBoard(enableSounds), NewCtrl(enableSounds)));
@@ -213,8 +222,9 @@ const RoomState = ({ children }) => {
     playerIsDealer,
     gameStarted
   ) {
-    players = []; // initialize array
+    tempPlayers = []; // initialize array
 
+    const players = tempPlayers;
     for (let i = 0; i < playerCount; i++) {
       players.push(
         new Player(seats.data[seatPositions[i]], playerIds[i], playerNames[i], playerMoneys[i])
@@ -332,13 +342,14 @@ const RoomState = ({ children }) => {
     roomUpdate(sData, room.current);
     setRoomInfo({ data: room.current.roomInfo });
     setCtrl({ data: room.current.ctrl });
-    statusPlayerUpdate(sData, players);
+    statusPlayerUpdate(sData, tempPlayers);
     setSeats({ data: seats.data });
     setBoard({ data: room.current.board });
   };
 
   // ----------------------------------------------------
   const holeCards = (pData) => {
+    const players = tempPlayers;
     for (let p = 0; p < pData.players.length; p++) {
       for (let i = 0; i < players.length; i++) {
         const playerRaw = pData.players[p];
@@ -374,6 +385,7 @@ const RoomState = ({ children }) => {
 
   // Handles last player action animation
   function playerLastActionHandler(aData) {
+    const players = tempPlayers;
     for (let i = 0; i < players.length; i++) {
       const player = players[i];
       const playerSeat = player.playerSeat;
@@ -416,6 +428,7 @@ const RoomState = ({ children }) => {
     if (enableSounds) {
       playCollectChipsToPot.play();
     }
+    const players = tempPlayers;
     for (let i = 0; i < players.length; i++) {
       const player = players[i];
       if (player.playerTotalBet > 0) {
@@ -426,6 +439,7 @@ const RoomState = ({ children }) => {
 
   // Receive all players cards before results for showing them
   function allPlayersCards(cData) {
+    const players = tempPlayers;
     for (let p = 0; p < cData.players.length; p++) {
       for (let i = 0; i < players.length; i++) {
         const playRaw = cData.players[p];
@@ -464,7 +478,30 @@ const RoomState = ({ children }) => {
   // eslint-disable-next-line prettier/prettier
   return (
     <RoomContext.Provider
-      value={{}}
+      value={{
+        roomId,
+        setRoomId,
+        players,
+        setPlayers,
+        heroTurn,
+        setHeroTurn,
+        enableSounds,
+        setEnableSounds,
+        actionButtonsEnabled,
+        setActionButtonsEnabled,
+        autoPlay,
+        setAutoPlay,
+        autoPlayCommandRequested,
+        setAutoPlayCommandRequested,
+        board,
+        setBoard,
+        roomInfo,
+        setRoomInfo,
+        ctrl,
+        setCtrl,
+        seats,
+        setSeats,
+      }}
     >
       {children}
     </RoomContext.Provider>
