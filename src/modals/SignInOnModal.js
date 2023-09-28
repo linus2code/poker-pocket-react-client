@@ -41,11 +41,14 @@ const SignInOnModal = ({ mode, context, closeModal }) => {
     if (lData.result) {
       console.log(JSON.stringify(lData));
       toast.success('You are now logged in for this instance.');
+      // Need to get all room's again or exit all running game.
+      // TODO: leave all table to login
+      reconnect();
+
       setIsLoggedIn({
         username: lData.username,
         password: lData.password,
       });
-      reconnect(); // Need to get all room's again
       closeModal();
     } else {
       toast.error('Login failed! Check your username and password.');
