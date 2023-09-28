@@ -157,6 +157,11 @@ body {
     animation: winnerPulse 0.5s infinite alternate;
 }
 
+/* adjust modal style */
+.modal-content {
+    width: 500px;
+}
+
 /* animation:winnerPulse 0.5s infinite alternate; */
 @keyframes winnerPulse {
     from {

@@ -25,7 +25,6 @@ const Navbar = () => {
   const socketCtx = useContext(socketContext);
   const gameCtx = useContext(gameContext);
 
-  function getGameInformation() {}
   function getLoggedInUserStatistics() {}
 
   const [enableSounds, setEnableSounds] = useState(true);
@@ -69,7 +68,7 @@ const Navbar = () => {
     openModal(() => <RankingsModal context={{ socketCtx }} />, t('RANKINGS'), t('CLOSE'));
 
   const openGameInfoModal = () =>
-    openModal(() => GameInfoModal, t('SERVER_INFORMATION'), t('CLOSE'));
+    openModal(() => <GameInfoModal context={{ socketCtx }} />, t('SERVER_INFORMATION'), t('CLOSE'));
 
   const openCmdModal = () => openModal(() => <CommandModal />, t('COMMAND_PROMPT'), t('CLOSE'));
 
@@ -109,9 +108,7 @@ const Navbar = () => {
             <NavButton onClick={() => openRoomModal('all')}>{t('GET_ROOMS')}</NavButton>
             <NavButton onClick={() => openRoomModal('spec')}>{t('SPECTATE')}</NavButton>
             <NavButton onClick={() => openRankingsModal()}>{t('RANKINGS')}</NavButton>
-            <NavButton onClick={() => openGameInfoModal() && getGameInformation}>
-              {t('SERVER')}
-            </NavButton>
+            <NavButton onClick={() => openGameInfoModal()}>{t('SERVER')}</NavButton>
             <NavButton onClick={openCmdModal}>{t('COMMAND')}</NavButton>
             <NavButton onClick={toggleSounds}>
               {enableSounds ? t('SOUNDS_DISABLE') : t('SOUNDS_ENABLE')}
