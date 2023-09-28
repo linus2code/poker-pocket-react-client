@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
 import NavButton from '@/components/buttons/NavButton';
+import globalContext from '@/context/global/globalContext';
 import contentContext from '@/context/content/contentContext';
 import modalContext from '@/context/modal/modalContext';
 import SelectRoomModal from '@/modals/SelectRoomModal';
@@ -8,18 +9,19 @@ import RankingsModal from '@/modals/RankingsModal';
 import GameInfoModal from '@/modals/GameInfoModal';
 import CommandModal from '@/modals/CommandModal';
 import UserModal from '@/modals/UserModal';
-import SignInModal from '@/modals/SignInModal';
-import SignOnModal from '@/modals/SignOnModal';
+import SignInOnModal from '@/modals/SignInOnModal';
 import socketContext from '@/context/websocket/socketContext';
 import gameContext from '@/context/game/gameContext';
 
 const LS_ENABLE_SOUNDS_STATE = 'LS_ENABLE_SOUNDS_STATE';
 
-const Navbar = ({ loggedIn }) => {
+const Navbar = () => {
   const { t } = useContext(contentContext);
-  const { openModal, closeModal } = useContext(modalContext);
+  const { isLoggedIn } = useContext(globalContext);
+  const { openView, openModal, closeModal } = useContext(modalContext);
 
-  const { socket } = useContext(socketContext);
+  const { socket, socketConnected } = useContext(socketContext);
+
   const socketCtx = useContext(socketContext);
   const gameCtx = useContext(gameContext);
 
@@ -40,6 +42,14 @@ const Navbar = ({ loggedIn }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enableSounds]);
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      openRoomModal('all');
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socketConnected]);
+
   function toggleSounds() {
     setEnableSounds(!enableSounds);
   }
@@ -50,67 +60,75 @@ const Navbar = ({ loggedIn }) => {
         () => (
           <SelectRoomModal mode={mode} context={{ socketCtx, gameCtx }} closeModal={closeModal} />
         ),
-        t('Select room'),
+        t('SELECT_ROOM'),
         t('CLOSE')
       );
     }
   };
 
-  const openRankingsModal = () => openModal(() => <RankingsModal />, t('Rankings'), t('CLOSE'));
+  const openRankingsModal = () => openModal(() => <RankingsModal />, t('RANKINGS'), t('CLOSE'));
 
   const openGameInfoModal = () =>
     openModal(() => GameInfoModal, t('SERVER_INFORMATION'), t('CLOSE'));
 
-  const openCmdModal = () => openModal(() => <CommandModal />, t('Command prompt'), t('CLOSE'));
+  const openCmdModal = () => openModal(() => <CommandModal />, t('COMMAND_PROMPT'), t('CLOSE'));
 
-  const openUserModal = () => openModal(() => <UserModal />, t('My statistics'), t('CLOSE'));
+  const openUserModal = () => openModal(() => <UserModal />, t('MY_STATISTICS'), t('CLOSE'));
 
-  const openSignInModal = () => openModal(() => <SignInModal />, t('Login'), t('CLOSE'));
+  // const openSignInModal = () => {
+  //   openModal(
+  //     () => <SignInOnModal mode={0} context={{ socketCtx, gameCtx }} closeModal={closeModal} />,
+  //     t('LOGIN'),
+  //     t('CLOSE')
+  //   );
+  // };
 
-  const openSignOnModal = () => openModal(() => <SignOnModal />, t('REGISTER'), t('CLOSE'));
+  const openSignInModaVuew = () => {
+    openView(() => (
+      <SignInOnModal mode={0} context={{ socketCtx, gameCtx }} closeModal={closeModal} />
+    ));
+  };
 
-  if (!loggedIn)
-    return (
-      <>
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a className="navbar-brand" href="http://www.nitramite.com/poker-pocket.html">
-            <img
-              src="./assets/images/logo.png"
-              style={{ width: '30px', height: '30px' }}
-              className="d-inline-block align-top"
-              alt="Poker Pocket logo"
-            />
-            Poker Pocket
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav mr-auto mt-1 mt-md-0">
-              <NavButton onClick={() => openRoomModal('all')}>{t('GET_ROOMS')}</NavButton>
-              <NavButton onClick={() => openRoomModal('Spec')}>{t('SPECTATE')}</NavButton>
-              <NavButton onClick={() => openRankingsModal() && getRankings()}>
-                {t('RANKINGS')}
-              </NavButton>
-              <NavButton onClick={() => openGameInfoModal() && getGameInformation}>
-                {t('SERVER')}
-              </NavButton>
-              <NavButton onClick={openCmdModal}>{t('COMMAND')}</NavButton>
-              <NavButton onClick={toggleSounds}>
-                {enableSounds ? t('SOUNDS_DISABLE') : t('SOUNDS_ENABLE')}
-              </NavButton>
-              <NavButton onClick={() => toast.success('Wow so easy!')}>
-                {t('NOTIFICATION')}
-              </NavButton>
-            </ul>
+  return (
+    <>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a className="navbar-brand" href="http://www.nitramite.com/poker-pocket.html">
+          <img
+            src="./assets/images/logo.png"
+            style={{ width: '30px', height: '30px' }}
+            className="d-inline-block align-top"
+            alt="Poker Pocket logo"
+          />
+          Poker Pocket
+        </a>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul className="navbar-nav mr-auto mt-1 mt-md-0">
+            <NavButton onClick={() => openRoomModal('all')}>{t('GET_ROOMS')}</NavButton>
+            <NavButton onClick={() => openRoomModal('spec')}>{t('SPECTATE')}</NavButton>
+            <NavButton onClick={() => openRankingsModal() && getRankings()}>
+              {t('RANKINGS')}
+            </NavButton>
+            <NavButton onClick={() => openGameInfoModal() && getGameInformation}>
+              {t('SERVER')}
+            </NavButton>
+            <NavButton onClick={openCmdModal}>{t('COMMAND')}</NavButton>
+            <NavButton onClick={toggleSounds}>
+              {enableSounds ? t('SOUNDS_DISABLE') : t('SOUNDS_ENABLE')}
+            </NavButton>
+            <NavButton onClick={() => toast.success('Wow so easy!')}>{t('NOTIFICATION')}</NavButton>
+          </ul>
+          {isLoggedIn ? (
             <ul
               id="loggedInUserIcon"
               className="nav navbar-nav navbar-right"
@@ -119,7 +137,12 @@ const Navbar = ({ loggedIn }) => {
               <li style={{ marginRight: '5px' }}>
                 <div
                   id="xpNeededForNextMedalText"
-                  style={{ color: 'white', height: '100%', textAlign: 'center', marginTop: '5px' }}
+                  style={{
+                    color: 'white',
+                    height: '100%',
+                    textAlign: 'center',
+                    marginTop: '5px',
+                  }}
                 ></div>
               </li>
               <li>
@@ -142,21 +165,17 @@ const Navbar = ({ loggedIn }) => {
                 </div>
               </li>
             </ul>
-            <form className="form-inline mt-1 my-md-0">
+          ) : null}
+          <div className="form-inline mt-1 my-md-0">
+            {!isLoggedIn ? (
               <button
                 id="nav_bar_login_btn"
                 className="btn btn-outline-success my-2 my-sm-0"
-                onClick={openSignInModal}
+                onClick={() => openSignInModaVuew()}
               >
                 {t('LOGIN')}
               </button>
-              <button
-                id="nav_bar_login_btn"
-                className="btn btn-outline-success my-2 my-sm-0"
-                onClick={openSignOnModal}
-              >
-                {t('REGISTER')}
-              </button>
+            ) : (
               <button
                 id="login_logout_btn"
                 className="btn btn-outline-success my-2 my-sm-0"
@@ -164,11 +183,12 @@ const Navbar = ({ loggedIn }) => {
               >
                 {t('LOGOUT')}
               </button>
-            </form>
+            )}
           </div>
-        </nav>
-      </>
-    );
+        </div>
+      </nav>
+    </>
+  );
 };
 
 export default Navbar;

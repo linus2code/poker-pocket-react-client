@@ -11,6 +11,10 @@
   "SOUNDS_ENABLE": "Enable sounds",
   "SOUNDS_DISABLE": "Disable sounds",
 
+  "SELECT_ROOM": "Select room",
+  "COMMAND_PROMPT": "Command prompt",
+  "MY_STATISTICS": "My statistics",
+
   "NOTIFICATION": "Notify",
 
   "SERVER_INFORMATION": "Server information",

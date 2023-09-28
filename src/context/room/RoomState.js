@@ -23,7 +23,7 @@ import {
 let players = [];
 
 const RoomState = ({ children }) => {
-  const { connId, regRoomHandler } = useContext(socketContext);
+  const { connId, socket } = useContext(socketContext);
 
   const {
     setHeroTurn,
@@ -43,10 +43,11 @@ const RoomState = ({ children }) => {
   const room = useRef(NewRoom(NewRoomInfo(), NewBoard(enableSounds), NewCtrl(enableSounds)));
 
   useEffect(() => {
-    // console.log('reg onRoomHandler');
-    regRoomHandler(onRoomHandler);
+    if (socket) {
+      socket.regRoomHandler(onRoomHandler);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     connIdRef.current = connId;

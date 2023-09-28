@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
-import globalContext from '@/context/global/globalContext';
+import React, { useState, useEffect, useMemo } from 'react';
+import { toast } from 'react-toastify';
 
 const playerNickname = 'Anon' + Math.floor(Math.random() * 1000);
 
 const SelectRoomModal = ({ mode, context, closeModal }) => {
-  const { tables } = useContext(globalContext);
-
   const { socketCtx, gameCtx } = context;
   const { roomId, setRoomId } = gameCtx;
   const { socket, connId, socketKey } = socketCtx;
@@ -21,7 +19,6 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
   const [filter, setFilter] = useState(filterList[0]);
 
   const onChangeFilter = (item) => {
-    getRooms(socket, item.params);
     setFilter(item);
   };
 
@@ -31,10 +28,10 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
     if (!isSpect) {
       getRooms(socket, filter.params);
     } else {
-      getSpectateRooms(socket);
+      getSpectateRooms(socket, filter.params);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSpect]);
+  }, [isSpect, filter]);
 
   const getRooms = (socket, roomSortParam) => {
     if (socket) {
@@ -49,7 +46,9 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
         });
         socket.send(data);
       } else {
-        window.location.reload();
+        toast.warn('reload when already in a room');
+        // TODO:
+        // window.location.reload();
       }
     }
   };
@@ -66,7 +65,7 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
     }
   }
 
-  function getSpectateRooms(socket) {
+  function getSpectateRooms(socket, roomSortParam) {
     if (socket) {
       if (roomId === -1) {
         const data = JSON.stringify({
@@ -74,11 +73,13 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
           socketKey: socketKey,
           key: 'getSpectateRooms',
           roomId: -1,
+          roomSortParam: roomSortParam,
         });
         socket.send(data);
       } else {
-        // toastr["info"]("Spectating is only possible if room selection is not done. Refresh browser, close room list and click \"Spectate\"");
-        window.location.reload();
+        toast.warn('reload when already in a room');
+        // TODO:
+        // window.location.reload();
       }
     }
   }
@@ -104,11 +105,28 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
   }
 
   useEffect(() => {
-    if (tables) {
-      parseRooms(tables);
+    if (socket) {
+      socket.regGameHandler(onGameHandler);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tables]);
+  }, [socket]);
+
+  const onGameHandler = (jsonData) => {
+    switch (jsonData.key) {
+      case 'getRooms':
+        console.log('get getRooms');
+        // Example: {"key":"getRooms","data":[{"roomId":0,"roomName":"Room 0","playerCount":0,"maxSeats":6},{"roomId":1,"roomName":"Room 1","playerCount":0,"maxSeats":6},{"roomId":2,"roomName":"Room 2","playerCount":0,"maxSeats":6}]}
+        parseRooms(jsonData.data);
+        break;
+      case 'getSpectateRooms':
+        parseRooms(jsonData.data);
+        break;
+      default:
+        return false;
+    }
+
+    return true;
+  };
 
   const parseRooms = (rData) => {
     setRoomsData(rData);
@@ -161,6 +179,7 @@ const SelectRoomModal = ({ mode, context, closeModal }) => {
 
   return (
     <>
+      {console.log('RE-RENDER modals')}
       <p>
         <button
           type="button"

@@ -19,7 +19,7 @@ const MainLayout = ({ children }) => {
 
   return (
     <div id="layout-wrapper">
-      <Navbar loggedIn={false} className="blur-target" />
+      <Navbar className="blur-target" />
       <StyledNoSocketWarn isWsConnected={socket != null} onClick={() => reconnect()} role="button">
         No connection, click here to try again
       </StyledNoSocketWarn>

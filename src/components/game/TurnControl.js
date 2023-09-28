@@ -30,11 +30,6 @@ const TurnControl = () => {
 
   let isloading = false;
 
-  // useEffect(() => {
-  //   console.log('useEffect connId', connId);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [connId]);
-
   function setFold() {
     if (socket) {
       const data = JSON.stringify({
