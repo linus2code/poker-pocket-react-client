@@ -67,9 +67,6 @@ const WebSocketProvider = ({ children }) => {
       case 'loggedInUserStatisticsResults':
         // loggedInUserStatisticsResults(jsonData.data);
         break;
-      case 'getRankingsResult':
-        // getRankingsResult(jsonData.code, jsonData.data);
-        break;
       case 'onXPGained':
         // onXPGained(jsonData.code, jsonData.data);
         break;

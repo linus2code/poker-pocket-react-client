@@ -25,7 +25,6 @@ const Navbar = () => {
   const socketCtx = useContext(socketContext);
   const gameCtx = useContext(gameContext);
 
-  function getRankings() {}
   function getGameInformation() {}
   function getLoggedInUserStatistics() {}
 
@@ -66,7 +65,8 @@ const Navbar = () => {
     }
   };
 
-  const openRankingsModal = () => openModal(() => <RankingsModal />, t('RANKINGS'), t('CLOSE'));
+  const openRankingsModal = () =>
+    openModal(() => <RankingsModal context={{ socketCtx }} />, t('RANKINGS'), t('CLOSE'));
 
   const openGameInfoModal = () =>
     openModal(() => GameInfoModal, t('SERVER_INFORMATION'), t('CLOSE'));
@@ -74,14 +74,6 @@ const Navbar = () => {
   const openCmdModal = () => openModal(() => <CommandModal />, t('COMMAND_PROMPT'), t('CLOSE'));
 
   const openUserModal = () => openModal(() => <UserModal />, t('MY_STATISTICS'), t('CLOSE'));
-
-  // const openSignInModal = () => {
-  //   openModal(
-  //     () => <SignInOnModal mode={0} context={{ socketCtx, gameCtx }} closeModal={closeModal} />,
-  //     t('LOGIN'),
-  //     t('CLOSE')
-  //   );
-  // };
 
   const openSignInModaVuew = () => {
     openView(() => (
@@ -116,9 +108,7 @@ const Navbar = () => {
           <ul className="navbar-nav mr-auto mt-1 mt-md-0">
             <NavButton onClick={() => openRoomModal('all')}>{t('GET_ROOMS')}</NavButton>
             <NavButton onClick={() => openRoomModal('spec')}>{t('SPECTATE')}</NavButton>
-            <NavButton onClick={() => openRankingsModal() && getRankings()}>
-              {t('RANKINGS')}
-            </NavButton>
+            <NavButton onClick={() => openRankingsModal()}>{t('RANKINGS')}</NavButton>
             <NavButton onClick={() => openGameInfoModal() && getGameInformation}>
               {t('SERVER')}
             </NavButton>

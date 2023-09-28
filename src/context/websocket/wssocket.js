@@ -4,6 +4,8 @@ export const NewWsSocket = (url, onConnect, onClose) => {
   const id = Math.floor(Math.random() * 1000);
   const data = { webSocket, id };
 
+  const handler = {};
+
   let onMessageHandler = null;
   let onRoomHandler = null;
   let onGameHandler = null;
@@ -17,8 +19,14 @@ export const NewWsSocket = (url, onConnect, onClose) => {
     webSocket.onmessage = (event) => {
       const jsonData = JSON.parse(event.data);
       console.log('jsonData ', jsonData.key);
+
       // console.log(JSON.stringify(jsonData));
       // console.log('jsonData ', jsonData.key);
+      if (jsonData.key in handler) {
+        handler[jsonData.key](jsonData);
+        return;
+      }
+
       if (onRoomHandler && onRoomHandler(jsonData)) {
         return;
       }
@@ -39,6 +47,10 @@ export const NewWsSocket = (url, onConnect, onClose) => {
   };
 
   registerCallbacks(webSocket);
+
+  const regHandler = (key, callback) => {
+    handler[key] = callback;
+  };
 
   const regMessageHandler = (callback) => {
     onMessageHandler = callback;
@@ -66,6 +78,7 @@ export const NewWsSocket = (url, onConnect, onClose) => {
   data.send = send;
   data.close = close;
 
+  data.handle = regHandler;
   data.regMessageHandler = regMessageHandler;
   data.regGameHandler = regGameHandler;
   data.regRoomHandler = regRoomHandler;
