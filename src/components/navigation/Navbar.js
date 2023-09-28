@@ -70,7 +70,8 @@ const Navbar = () => {
   const openGameInfoModal = () =>
     openModal(() => <GameInfoModal context={{ socketCtx }} />, t('SERVER_INFORMATION'), t('CLOSE'));
 
-  const openCmdModal = () => openModal(() => <CommandModal />, t('COMMAND_PROMPT'), t('CLOSE'));
+  const openCmdModal = () =>
+    openView(() => <CommandModal context={{ socketCtx }} closeModal={closeModal} />);
 
   const openUserModal = () => openModal(() => <UserModal />, t('MY_STATISTICS'), t('CLOSE'));
 
