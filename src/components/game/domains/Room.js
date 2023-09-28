@@ -5,25 +5,25 @@ export const NewBoard = (enableSounds) => {
   let minBet = 100;
 
   const middleCards = [];
-  for (let m = 0; m < 5; m++) {
-    middleCards.push(null);
-  }
-
   const middleCardsSlideUp = [];
   for (let m = 0; m < 5; m++) {
+    middleCards.push(null);
     middleCardsSlideUp.push(null);
   }
 
   const resetMiddleCards = () => {
     for (let m = 0; m < middleCards.length; m++) {
       middleCards[m] = null;
+      middleCardsSlideUp[m] = false;
     }
   };
 
-  const setMiddleCard = (number, isMiddleOfTheGame) => {
+  const setMiddleCard = (number, cardStr, isMiddleOfTheGame) => {
     if (enableSounds && !isMiddleOfTheGame) {
       playCardSlideSix.play();
     }
+
+    middleCards[number] = cardStr;
   };
 
   const startWinnerCardGlowAnimation = (cardNumber) => {
@@ -61,6 +61,12 @@ export const NewBoard = (enableSounds) => {
     setMiddleCard,
     startWinnerCardGlowAnimation,
   };
+};
+
+export const initBoard = (board) => {
+  board.setTotalPot(0);
+  board.setMinBet(0);
+  board.resetMiddleCards();
 };
 
 export const NewRoomInfo = () => {
@@ -188,27 +194,16 @@ export const NewCtrl = (enableSounds) => {
   };
 };
 
+export const initCtrl = (ctrl) => {
+  ctrl.actionBtnVisibility(false, true);
+};
+
 const NewRoom = (roomInfo, board, ctrl) => {
   return {
     roomInfo,
     board,
     ctrl,
   };
-};
-
-export const initRoom = (room) => {
-  initBoard(room.board);
-  initCtrl(room.ctrl);
-};
-
-export const initBoard = (board) => {
-  board.setTotalPot(0);
-  board.setMinBet(0);
-  board.resetMiddleCards();
-};
-
-export const initCtrl = (ctrl) => {
-  ctrl.actionBtnVisibility(false, true);
 };
 
 // ----------------------------------------------------

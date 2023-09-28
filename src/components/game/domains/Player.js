@@ -15,13 +15,9 @@ export default function Player(playerSeat_, playerId_, playerName_, playerMoney_
 
 // ???
 Player.prototype.initPlayer = function (isMiddleOfTheGame) {
-  this.playerSeat.initAnimations();
   this.setPlayerSeatVisibility();
   this.setPlayerName();
   this.setPlayerMoney();
-  this.isFold = false;
-  this.isDealer = false;
-  this.isCallSituation = false;
   if (isMiddleOfTheGame) {
     // TODO: why knows cards ?
     this.setPlayerCards();

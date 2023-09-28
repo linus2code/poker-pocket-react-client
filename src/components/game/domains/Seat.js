@@ -63,18 +63,6 @@ Seat.prototype.initSeat = function () {
   this.seatWinningGlowCard1 = false;
 };
 
-Seat.prototype.initAnimations = function () {
-  // this.seatCard0.classList.remove('magictime');
-  // this.seatCard0.classList.remove('puffIn');
-  // this.seatCard1.classList.remove('magictime');
-  // this.seatCard1.classList.remove('puffIn');
-  // this.seatCard0.style.animation = '';
-  // this.seatCard1.style.animation = '';
-  // this.seatCardView.style.animation = '';
-  // this.seatBetFrame.classList.remove('magictime');
-  // this.seatBetFrame.classList.remove('puffIn');
-};
-
 Seat.prototype.setSeatFrameVisibility = function (bool) {
   this.seatFrame = bool;
 };

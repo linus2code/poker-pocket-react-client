@@ -16,7 +16,7 @@ export const NewWsSocket = (url, onConnect, onClose) => {
       // console.log('jsonData ', jsonData.key);
 
       // console.log(JSON.stringify(jsonData));
-      // console.log('jsonData ', jsonData.key);
+      console.log('jsonData ', jsonData.key);
       if (jsonData.key in handler) {
         handler[jsonData.key](jsonData);
         return;

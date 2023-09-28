@@ -6,7 +6,8 @@ import NewRoom, {
   NewRoomInfo,
   NewBoard,
   NewCtrl,
-  initRoom,
+  initBoard,
+  initCtrl,
   roomUpdate,
 } from '@/components/game/domains/Room';
 import { initSeats } from '@/components/game/domains/Seat';
@@ -27,23 +28,25 @@ const RoomState = ({ children }) => {
   const { connId, socket, socketDisconnected } = useContext(socketContext);
   const { setMyDashboardDataRefresh } = useContext(authContext);
 
+  const [enableSounds, setEnableSounds] = useState(true);
+  const [autoPlay, setAutoPlay] = useState(false);
+  // Set true makes logged in player play automatically
+  const [autoPlayCommandRequested, setAutoPlayCommandRequested] = useState(false);
+
   const [roomId, setRoomId] = useState(-1); // ROOM_ID = -1;
   const [players, setPlayers] = useState(null);
-
-  const [enableSounds, setEnableSounds] = useState(true);
+  const [heroTurn, setHeroTurn] = useState({ data: null });
 
   const [actionButtonsEnabled, setActionButtonsEnabled] = useState(false);
-  // Set true makes logged in player play automatically
-  const [autoPlay, setAutoPlay] = useState(false);
-  const [autoPlayCommandRequested, setAutoPlayCommandRequested] = useState(false);
 
   const [roomInfo, setRoomInfo] = useState({ data: NewRoomInfo() });
   const [board, setBoard] = useState({ data: NewBoard(enableSounds) });
   const [ctrl, setCtrl] = useState({ data: NewCtrl(enableSounds) });
 
+  const roomRef = useRef(NewRoom(NewRoomInfo(), NewBoard(enableSounds), NewCtrl(enableSounds)));
+
   const seatsRef = useRef(setupSeats());
   const [seats, setSeats] = useState({ data: seatsRef.current });
-  const [heroTurn, setHeroTurn] = useState({ data: null });
 
   useEffect(() => {
     setPlayers(null);
@@ -51,7 +54,6 @@ const RoomState = ({ children }) => {
   }, [socketDisconnected]);
 
   const connIdRef = useRef(-1);
-  const room = useRef(NewRoom(NewRoomInfo(), NewBoard(enableSounds), NewCtrl(enableSounds)));
 
   useEffect(() => {
     if (socket) {
@@ -98,30 +100,27 @@ const RoomState = ({ children }) => {
   // init room data
   const roomParameters = (rData) => {
     console.log('Room params: ', JSON.stringify(rData));
-
-    initRoom(room.current);
-    initSeats(seats.data);
     setMyDashboardDataRefresh({}); // Added so refreshing xp needed counter updates automatically
-    roomStatusParser(rData);
-    boardParser(rData);
-    setRoomInfo({ data: room.current.roomInfo });
-    setBoard({ data: room.current.board });
 
+    initBoard(roomRef.current.board);
+    initCtrl(roomRef.current.ctrl);
+    initSeats(seatsRef.current);
+
+    boardParser(rData, roomRef.current.board);
     playerParser(rData);
-    setSeats({ data: seats.data });
+
+    setRoomInfo({ data: roomRef.current.roomInfo });
+    setBoard({ data: roomRef.current.board });
+    setSeats({ data: seatsRef.current });
   };
 
-  const roomStatusParser = (rData) => {};
-
-  const boardParser = (rData) => {
-    const board = room.current.board;
+  const boardParser = (rData, board) => {
     board.setMinBet(rData.roomMinBet);
 
     const gameStarted = rData.gameStarted;
     if (rData.middleCards?.length > 0) {
       for (let m = 0; m < rData.middleCards.length; m++) {
-        board.middleCards[m] = rData.middleCards[m];
-        board.setMiddleCard(m, gameStarted);
+        board.setMiddleCard(m, rData.middleCards[m], gameStarted);
       }
     }
   };
@@ -278,7 +277,7 @@ const RoomState = ({ children }) => {
       if (Number(pId) === Number(connIdRef.current)) {
         // Hero
         player.setPlayerTurn(pTurn, sData.isCallSituation);
-        room.current.ctrl.actionBtnVisibility(pTurn, false);
+        roomRef.current.ctrl.actionBtnVisibility(pTurn, false);
 
         setActionButtonsEnabled(true);
         if (pTurn && autoPlay && !autoPlayCommandRequested) {
@@ -315,12 +314,12 @@ const RoomState = ({ children }) => {
             player.startWinnerGlowAnimation();
             if (sData.roundWinnerPlayerCards) {
               console.log(sData.roundWinnerPlayerCards);
-              console.log(room.current.board);
+              console.log(roomRef.current.board);
               let cl = sData.roundWinnerPlayerCards.length;
               for (let c = 0; c < cl; c++) {
                 player.startWinnerGlowCardsAnimation(
                   sData.roundWinnerPlayerCards[c],
-                  room.current.board
+                  roomRef.current.board
                 );
               }
             }
@@ -339,12 +338,12 @@ const RoomState = ({ children }) => {
   const statusUpdate = (sData) => {
     // console.log('statusUpdate ', sData);
 
-    roomUpdate(sData, room.current);
-    setRoomInfo({ data: room.current.roomInfo });
-    setCtrl({ data: room.current.ctrl });
+    roomUpdate(sData, roomRef.current);
+    setRoomInfo({ data: roomRef.current.roomInfo });
+    setCtrl({ data: roomRef.current.ctrl });
     statusPlayerUpdate(sData, tempPlayers);
     setSeats({ data: seats.data });
-    setBoard({ data: room.current.board });
+    setBoard({ data: roomRef.current.board });
   };
 
   // ----------------------------------------------------
@@ -403,7 +402,7 @@ const RoomState = ({ children }) => {
   }
 
   async function theFlop(fData) {
-    const board = room.current.board;
+    const board = roomRef.current.board;
     board.middleCards[0] = fData.middleCards[0];
     board.middleCards[1] = fData.middleCards[1];
     board.middleCards[2] = fData.middleCards[2];
@@ -411,13 +410,13 @@ const RoomState = ({ children }) => {
   }
 
   async function theTurn(tData) {
-    const board = room.current.board;
+    const board = roomRef.current.board;
     board.middleCards[3] = tData.middleCards[3];
     setBoard({ data: board });
   }
 
   function theRiver(rData) {
-    const board = room.current.board;
+    const board = roomRef.current.board;
     board.middleCards[4] = rData.middleCards[4];
     setBoard({ data: board });
   }
