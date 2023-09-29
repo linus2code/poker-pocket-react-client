@@ -81,6 +81,10 @@ const Navbar = () => {
     ));
   };
 
+  const logoutClick = () => {
+    window.location.reload();
+  };
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -168,6 +172,7 @@ const Navbar = () => {
                 id="login_logout_btn"
                 className="btn btn-outline-success my-2 my-sm-0"
                 type="button"
+                onClick={() => logoutClick()}
               >
                 {t('LOGOUT')}
               </button>
