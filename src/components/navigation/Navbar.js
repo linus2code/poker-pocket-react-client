@@ -85,6 +85,12 @@ const Navbar = () => {
     window.location.reload();
   };
 
+  const [isTogglerShow, setIsTogglerShow] = useState(false);
+
+  const togglerSwitch = () => {
+    setIsTogglerShow(!isTogglerShow);
+  };
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -106,9 +112,12 @@ const Navbar = () => {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span className="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon" onClick={togglerSwitch}></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+        <div
+          className={`collapse navbar-collapse ${isTogglerShow ? 'show' : ''}`}
+          id="navbarSupportedContent"
+        >
           <ul className="navbar-nav mr-auto mt-1 mt-md-0">
             <NavButton onClick={() => openRoomModal('all')}>{t('GET_ROOMS')}</NavButton>
             <NavButton onClick={() => openRoomModal('spec')}>{t('SPECTATE')}</NavButton>
