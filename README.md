@@ -14,7 +14,6 @@ Table of contents
 =================
 
 * [Requirements](#requirements)* [Contributions](#contributions)
-* [Authors](#authors)
 * [Contributors](#contributors)
 * [License](#license)
 
