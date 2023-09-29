@@ -2,7 +2,7 @@
 
 # Poker Pocket React Client
 
-This project is a react version of [Poker-Pocket-Backend](https://github.com/norkator/poker-pocket-web-client) and it's web project which brings web ui for following game
+This project is a react version of [poker-pocket-web-client](https://github.com/norkator/poker-pocket-web-client) and it's web project which brings web ui for following game
 
 backend:
 [Poker-Pocket-Backend](https://github.com/norkator/Poker-Pocket-Backend)
