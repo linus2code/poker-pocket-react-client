@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext, useMemo, useRef } from 'react';
 // import styled from 'styled-components';
 import contentContext from '@/context/content/contentContext';
+import { formatMoney } from '@/utils/Money';
 
 const UserDashboardModal = ({ context, closeModal }) => {
   const { t } = useContext(contentContext);
 
   const { socketCtx, authCtx } = context;
   const { socket, connId, socketKey } = socketCtx;
-  const { myDashboardData, setMyDashboardDataRefresh } = authCtx;
+  const { myDashboardData, setMyDashboardDataRefresh, setXpNeededForNextMedal } = authCtx;
 
   useEffect(() => {
     if (socket) {
@@ -99,32 +100,41 @@ const UserDashboardModal = ({ context, closeModal }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [myData, setMyData] = useState(null);
+  const initMyData = {
+    userStatsMoney: '',
+    userStatsWins: '',
+    userStatsLoses: '',
+    userXP: '',
+    userStatsMedalsTitle: null,
+  };
+  const [myData, setMyData] = useState(initMyData);
 
   useEffect(() => {
     if (myDashboardData) {
       parserloggedInUserStatisticsResults(myDashboardData);
     } else {
-      setMyData(null);
+      setMyData(initMyData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [myDashboardData]);
 
   function parserloggedInUserStatisticsResults(uData) {
-    console.log('parserloggedInUserStatisticsResults');
-    let userStatsMedalsTitle = '';
+    console.log('parserloggedInUserStatisticsResults', uData);
+    let userStatsMedalsTitle = null;
     let xpLevel = Number(uData.xp);
     if (xpLevel >= 1000) {
       userStatsMedalsTitle = 'You have following medals';
     }
 
+    setXpNeededForNextMedal(uData.xpNeededForNextMedal);
+
     const data = {
-      userStatsMoney: Number(uData.money).currencyFormat(2, '.', ',') + '$',
+      userStatsMoney: formatMoney(uData.money) + '$',
       userStatsWins: uData.winCount,
       userStatsLoses: uData.loseCount,
       userXP: uData.xp + ' xp',
-      xpNeededForNextMedalText: 'Next medal ' + '+' + uData.xpNeededForNextMedal + 'xp',
       userStatsMedalsTitle: userStatsMedalsTitle,
+
       havingMedals: uData.havingMedals,
     };
 
@@ -172,7 +182,9 @@ const UserDashboardModal = ({ context, closeModal }) => {
                 type="button"
                 className="btn btn-danger"
                 style={{ width: '100%', fontSize: '2em' }}
-              ></button>
+              >
+                {myData.userStatsMoney}
+              </button>
             </div>
             <div className="col-md-3">
               <div style={{ width: '100%', textAlign: 'center' }}>{t('Wins')}</div>
@@ -181,7 +193,9 @@ const UserDashboardModal = ({ context, closeModal }) => {
                 type="button"
                 className="btn btn-danger"
                 style={{ width: '100%', fontSize: '2em' }}
-              ></button>
+              >
+                {myData.userStatsWins}
+              </button>
             </div>
             <div className="col-md-3">
               <div style={{ width: '100%', textAlign: 'center' }}>{t('Losses')}</div>
@@ -190,7 +204,9 @@ const UserDashboardModal = ({ context, closeModal }) => {
                 type="button"
                 className="btn btn-danger"
                 style={{ width: '100%', fontSize: '2em' }}
-              ></button>
+              >
+                {myData.userStatsLoses}
+              </button>
             </div>
           </div>
           <hr className="my-3" />
@@ -200,12 +216,14 @@ const UserDashboardModal = ({ context, closeModal }) => {
               type="button"
               className="btn btn-danger"
               style={{ width: '100%', fontSize: '2em' }}
-            ></button>
+            >
+              {myData.userXP}
+            </button>
             <div
               id="userStatsMedalsTitle"
               style={{ width: '100%', marginTop: '10px', textAlign: 'center' }}
             >
-              {t('No medals')}
+              {myData.userStatsMedalsTitle ? myData.userStatsMedalsTitle : t('No medals')}
             </div>
             <div id="userStatsMedalsFlexBox" className="d-flex justify-content-center flex-row">
               {MedalsView}

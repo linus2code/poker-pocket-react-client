@@ -8,7 +8,7 @@ const SignInOnModal = ({ mode, context, closeModal }) => {
   const [state, setState] = useState(mode);
 
   const { socketCtx, authCtx } = context;
-  const { socket, connId, socketKey, reconnect } = socketCtx;
+  const { socket, connId, socketKey } = socketCtx;
   const { setIsLoggedIn } = authCtx;
 
   const regAuthHandler = (socket) => {
@@ -43,7 +43,7 @@ const SignInOnModal = ({ mode, context, closeModal }) => {
       toast.success('You are now logged in for this instance.');
       // Need to get all room's again or exit all running game.
       // TODO: leave all table to login
-      reconnect();
+      // reconnect();
 
       setIsLoggedIn({
         username: lData.username,

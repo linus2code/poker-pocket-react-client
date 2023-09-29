@@ -20,7 +20,7 @@ const Navbar = () => {
   const { openView, openModal, closeModal } = useContext(modalContext);
 
   const { socket, socketConnected } = useContext(socketContext);
-  const { isLoggedIn } = useContext(authContext);
+  const { isAuthed, xpNeededForNextMedal } = useContext(authContext);
 
   const socketCtx = useContext(socketContext);
   const authCtx = useContext(authContext);
@@ -40,7 +40,7 @@ const Navbar = () => {
   }, [enableSounds]);
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isAuthed) {
       openRoomModal('all');
     }
 
@@ -120,7 +120,7 @@ const Navbar = () => {
             </NavButton>
             <NavButton onClick={() => toast.success('Wow so easy!')}>{t('NOTIFICATION')}</NavButton>
           </ul>
-          {isLoggedIn ? (
+          {isAuthed ? (
             <ul
               id="loggedInUserIcon"
               className="nav navbar-nav navbar-right"
@@ -128,14 +128,15 @@ const Navbar = () => {
             >
               <li style={{ marginRight: '5px' }}>
                 <div
-                  id="xpNeededForNextMedalText"
                   style={{
                     color: 'white',
                     height: '100%',
                     textAlign: 'center',
                     marginTop: '5px',
                   }}
-                ></div>
+                >
+                  {xpNeededForNextMedal ? 'Next medal +' + xpNeededForNextMedal + 'xp' : ''}
+                </div>
               </li>
               <li>
                 <div style={{ marginRight: '5px' }}>
@@ -159,7 +160,7 @@ const Navbar = () => {
             </ul>
           ) : null}
           <div className="form-inline mt-1 my-md-0">
-            {!isLoggedIn ? (
+            {!isAuthed ? (
               <button
                 id="nav_bar_login_btn"
                 className="btn btn-outline-success my-2 my-sm-0"

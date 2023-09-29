@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { toast } from 'react-toastify';
 import AuthContext from './authContext';
 import socketContext from '@/context/websocket/socketContext';
@@ -7,6 +7,9 @@ const AuthState = ({ children }) => {
   const { socket, connId, socketKey } = useContext(socketContext);
 
   const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [isAuthed, setIsAuthed] = useState(false);
+
+  const isLoggedInRef = useRef(false);
 
   useEffect(() => {
     if (socket) {
@@ -24,11 +27,22 @@ const AuthState = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log('useEffect', isLoggedIn);
     if (isLoggedIn) {
+      console.log('useEffect isLoggedIn');
+
+      isLoggedInRef.current = true;
       setLoggedInUserParams(isLoggedIn);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (isAuthed) {
+      getLoggedInUserStatistics();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthed]);
 
   // Login related functions
   function setLoggedInUserParams(isLoggedIn) {
@@ -54,12 +68,13 @@ const AuthState = ({ children }) => {
     if (!lData.result) {
       toast.error('You are logged in from another instance, which is forbidden!');
     } else {
-      getLoggedInUserStatistics();
+      setIsAuthed(true);
     }
   }
 
   function getLoggedInUserStatistics() {
-    if (socket && isLoggedIn) {
+    if (socket && isAuthed) {
+      console.log('isAuthed getLoggedInUserStatistics');
       const data = JSON.stringify({
         connectionId: connId,
         socketKey: socketKey,
@@ -71,6 +86,7 @@ const AuthState = ({ children }) => {
 
   const [myDashboardRefresh, setMyDashboardDataRefresh] = useState(null);
   const [myDashboardData, setMyDashboardData] = useState(null);
+  const [xpNeededForNextMedal, setXpNeededForNextMedal] = useState(null);
 
   useEffect(() => {
     getLoggedInUserStatistics();
@@ -78,7 +94,7 @@ const AuthState = ({ children }) => {
   }, [myDashboardRefresh]);
 
   function loggedInUserStatisticsResults(uData) {
-    // console.log(JSON.stringify(uData));
+    console.log('isAuthed loggedInUserStatisticsResults', JSON.stringify(uData));
     setMyDashboardData(uData);
   }
 
@@ -87,9 +103,13 @@ const AuthState = ({ children }) => {
       value={{
         isLoggedIn,
         setIsLoggedIn,
+        isAuthed,
+        setIsAuthed,
         myDashboardData,
         myDashboardRefresh,
         setMyDashboardDataRefresh,
+        xpNeededForNextMedal,
+        setXpNeededForNextMedal,
       }}
     >
       {children}
